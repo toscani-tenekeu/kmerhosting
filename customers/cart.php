@@ -166,6 +166,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['checkout'])) {
     </script>
     <!-- Font Awesome -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- SweetAlert2 -->
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 </head>
 <body class="bg-dark-900 text-white">
     <!-- Header/Navbar -->
@@ -354,8 +356,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['checkout'])) {
                                                 </td>
                                                 <td class="py-4 text-white"><?php echo number_format($itemTotal ?? 0, 0, ',', ' '); ?> FCFA</td>
                                                 <td class="py-4">
-                                                    <button class="remove-item p-2 bg-red-900/30 hover:bg-red-800/50 text-red-400 rounded" data-id="<?php echo $item['id']; ?>">
-                                                        <i class="fas fa-trash"></i>
+                                                    <button class="remove-item p-2 bg-red-900/30 hover:bg-red-800/50 text-red-400 rounded-lg transition-all duration-300 hover:scale-110 focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-opacity-50" data-id="<?php echo $item['id']; ?>">
+                                                        <i class="fas fa-trash-alt"></i>
                                                     </button>
                                                 </td>
                                             </tr>
@@ -430,8 +432,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['checkout'])) {
                     
                     <div>
                         <label for="amount" class="block text-sm font-medium text-gray-300 mb-1">Montant (FCFA)</label>
-                        <input type="number" id="amount" name="amount" class="bg-dark-900 border border-dark-600 text-white rounded-md block w-full p-2.5 focus:outline-none focus:ring-1 focus:ring-kmergreen focus:border-kmergreen" placeholder="Minimum 100 FCFA" min="100" step="100" value="1000" required>
-                        <p class="mt-1 text-sm text-gray-400">Montant minimum: 100 FCFA</p>
+                        <input type="number" id="amount" name="amount" class="bg-dark-900 border border-dark-600 text-white rounded-md block w-full p-2.5 focus:outline-none focus:ring-1 focus:ring-kmergreen focus:border-kmergreen" placeholder="Minimum 1 000 FCFA" min="1000" step="100" value="1000" required>
+                        <p class="mt-1 text-sm text-gray-400">Montant minimum: 1 000 FCFA</p>
                     </div>
                     
                     <div class="pt-2">
@@ -604,10 +606,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['checkout'])) {
                 removeItemBtns.forEach(btn => {
                     btn.addEventListener('click', function() {
                         const id = this.getAttribute('data-id');
-                        
-                        if (confirm('Êtes-vous sûr de vouloir supprimer cet article du panier?')) {
-                            removeCartItem(id);
-                        }
+                        removeCartItem(id);
                     });
                 });
             }
@@ -635,28 +634,82 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['checkout'])) {
                 });
             }
 
-            // Fonction pour supprimer un article
+       
+            // Supprimer un article du panier
             function removeCartItem(id) {
-                fetch('../backend/auth/cart/remove_item.php', {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/x-www-form-urlencoded',
-                    },
-                    body: `cart_item_id=${id}`
-                })
-                .then(response => response.json())
-                .then(data => {
-                    if (data.success) {
-                        // Recharger la page
-                        window.location.reload();
-                    } else {
-                        alert('Erreur: ' + data.message);
-                    }
-                })
-                .catch(error => {
-                    console.error('Error:', error);
+    Swal.fire({
+        title: 'Êtes-vous sûr?',
+        text: "Voulez-vous supprimer cet article de votre panier?",
+        icon: 'warning',
+        showCancelButton: true,
+        confirmButtonColor: '#10b981',
+        cancelButtonColor: '#475569',
+        confirmButtonText: 'Oui, supprimer',
+        cancelButtonText: 'Annuler',
+        background: '#1e293b',
+        color: '#fff'
+    }).then((result) => {
+        if (result.isConfirmed) {
+            // Afficher un indicateur de chargement
+            Swal.fire({
+                title: 'Suppression en cours...',
+                text: 'Veuillez patienter',
+                allowOutsideClick: false,
+                didOpen: () => {
+                    Swal.showLoading();
+                },
+                background: '#1e293b',
+                color: '#fff'
+            });
+            
+            fetch('../backend/cart/remove_from_cart.php', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/x-www-form-urlencoded',
+                },
+                body: `item_id=${id}`
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.status === 'success') {
+                    // Afficher un message de succès
+                    Swal.fire({
+                        title: 'Supprimé!',
+                        text: 'L\'article a été supprimé de votre panier',
+                        icon: 'success',
+                        confirmButtonColor: '#10b981',
+                        background: '#1e293b',
+                        color: '#fff',
+                        timer: 1500,
+                        showConfirmButton: false
+                    }).then(() => {
+                        location.reload();
+                    });
+                } else {
+                    Swal.fire({
+                        title: 'Erreur!',
+                        text: data.message || 'Erreur lors de la suppression de l\'article',
+                        icon: 'error',
+                        confirmButtonColor: '#10b981',
+                        background: '#1e293b',
+                        color: '#fff'
+                    });
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                Swal.fire({
+                    title: 'Erreur!',
+                    text: 'Une erreur est survenue lors de la suppression',
+                    icon: 'error',
+                    confirmButtonColor: '#10b981',
+                    background: '#1e293b',
+                    color: '#fff'
                 });
-            }
+            });
+        }
+    });
+}
 
             // Recharge Modal
             const rechargeBtn = document.getElementById('recharge-btn');

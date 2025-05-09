@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Hôte : 127.0.0.1:3306
--- Généré le : ven. 09 mai 2025 à 12:41
+-- Généré le : ven. 09 mai 2025 à 15:16
 -- Version du serveur : 5.7.40
 -- Version de PHP : 8.2.0
 
@@ -39,7 +39,17 @@ CREATE TABLE IF NOT EXISTS `cart` (
   `updated_at` datetime DEFAULT NULL,
   PRIMARY KEY (`id`),
   KEY `user_id` (`user_id`)
-) ENGINE=InnoDB AUTO_INCREMENT=15 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=24 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+--
+-- Déchargement des données de la table `cart`
+--
+
+INSERT INTO `cart` (`id`, `user_id`, `product_type`, `product_id`, `quantity`, `custom_domain`, `added_at`, `updated_at`) VALUES
+(19, 1, 'hosting', '2', 1, NULL, '2025-05-09 15:08:26', NULL),
+(20, 1, 'ssl', '3', 1, NULL, '2025-05-09 15:08:33', NULL),
+(21, 1, 'wordpress', '1', 1, NULL, '2025-05-09 15:08:39', NULL),
+(22, 1, 'domain', '1', 1, 'toscani.technology', '2025-05-09 15:08:54', NULL);
 
 -- --------------------------------------------------------
 
@@ -55,14 +65,14 @@ CREATE TABLE IF NOT EXISTS `credit` (
   `last_updated` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
   PRIMARY KEY (`id`),
   UNIQUE KEY `user_id` (`user_id`)
-) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=4 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 --
 -- Déchargement des données de la table `credit`
 --
 
 INSERT INTO `credit` (`id`, `user_id`, `amount`, `last_updated`) VALUES
-(1, 1, '260500.00', '2025-05-09 01:47:45');
+(1, 1, '207500.00', '2025-05-09 14:08:00');
 
 -- --------------------------------------------------------
 
@@ -93,6 +103,45 @@ INSERT INTO `credit_logs` (`id`, `user_id`, `amount`, `type`, `description`, `cr
 (4, 1, '1000.00', 'recharge', 'Recharge via Fapshi (TransID: yNwWNGCLGZ)', '2025-05-09 00:57:37'),
 (5, 1, '1000.00', 'recharge', 'Recharge via Fapshi (TransID: yNwWNGCLGZ)', '2025-05-09 00:59:19'),
 (6, 1, '1000.00', 'recharge', 'Recharge via Fapshi (TransID: yNwWNGCLGZ)', '2025-05-09 01:05:59');
+
+-- --------------------------------------------------------
+
+--
+-- Structure de la table `domain_packages`
+--
+
+DROP TABLE IF EXISTS `domain_packages`;
+CREATE TABLE IF NOT EXISTS `domain_packages` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `extension` varchar(20) NOT NULL,
+  `price` decimal(10,2) NOT NULL,
+  `renewal_price` decimal(10,2) NOT NULL,
+  `description` text NOT NULL,
+  `features` text NOT NULL,
+  `popular` tinyint(1) NOT NULL DEFAULT '0',
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=16 DEFAULT CHARSET=utf8mb4;
+
+--
+-- Déchargement des données de la table `domain_packages`
+--
+
+INSERT INTO `domain_packages` (`id`, `extension`, `price`, `renewal_price`, `description`, `features`, `popular`) VALUES
+(1, '.com', '9500.00', '9500.00', 'L\'extension la plus populaire pour les sites web commerciaux.', 'Protection WHOIS,DNS Management,Redirection Email,Renouvellement automatique', 1),
+(2, '.org', '9800.00', '9800.00', 'Idéal pour les organisations à but non lucratif et les associations.', 'Protection WHOIS,DNS Management,Redirection Email,Renouvellement automatique', 1),
+(3, '.net', '10500.00', '10500.00', 'Parfait pour les entreprises technologiques et les réseaux.', 'Protection WHOIS,DNS Management,Redirection Email,Renouvellement automatique', 1),
+(4, '.cm', '35000.00', '35000.00', 'Extension nationale du Cameroun, idéale pour les entreprises locales.', 'Protection WHOIS,DNS Management,Redirection Email,Renouvellement automatique', 1),
+(5, '.info', '12000.00', '12000.00', 'Idéal pour les sites d\'information et de ressources.', 'Protection WHOIS,DNS Management,Redirection Email,Renouvellement automatique', 0),
+(6, '.biz', '11000.00', '11000.00', 'Conçu pour les entreprises et les activités commerciales.', 'Protection WHOIS,DNS Management,Redirection Email,Renouvellement automatique', 0),
+(7, '.site', '8500.00', '8500.00', 'Une extension polyvalente pour tout type de site web.', 'Protection WHOIS,DNS Management,Redirection Email,Renouvellement automatique', 0),
+(8, '.online', '9000.00', '9000.00', 'Parfait pour les entreprises qui opèrent principalement en ligne.', 'Protection WHOIS,DNS Management,Redirection Email,Renouvellement automatique', 0),
+(9, '.store', '10000.00', '10000.00', 'Idéal pour les boutiques en ligne et les e-commerces.', 'Protection WHOIS,DNS Management,Redirection Email,Renouvellement automatique', 0),
+(10, '.app', '14000.00', '14000.00', 'Conçu pour les applications mobiles et les développeurs.', 'Protection WHOIS,DNS Management,Redirection Email,Renouvellement automatique', 0),
+(11, '.dev', '14500.00', '14500.00', 'Parfait pour les développeurs et les projets de développement.', 'Protection WHOIS,DNS Management,Redirection Email,Renouvellement automatique', 0),
+(12, '.co', '15000.00', '15000.00', 'Une alternative populaire à .com pour les entreprises.', 'Protection WHOIS,DNS Management,Redirection Email,Renouvellement automatique', 0),
+(13, '.africa', '18000.00', '18000.00', 'Extension régionale pour les entreprises africaines.', 'Protection WHOIS,DNS Management,Redirection Email,Renouvellement automatique', 0),
+(14, '.ai', '30000.00', '30000.00', 'Idéal pour les entreprises d\'intelligence artificielle.', 'Protection WHOIS,DNS Management,Redirection Email,Renouvellement automatique', 0),
+(15, '.cm', '35000.00', '35000.00', 'Extension nationale du Cameroun.', 'Protection WHOIS,DNS Management,Redirection Email,Renouvellement automatique', 0);
 
 -- --------------------------------------------------------
 
@@ -202,7 +251,7 @@ CREATE TABLE IF NOT EXISTS `orders` (
   `updated_at` datetime DEFAULT NULL,
   PRIMARY KEY (`id`),
   KEY `user_id` (`user_id`)
-) ENGINE=InnoDB AUTO_INCREMENT=10 DEFAULT CHARSET=utf8mb4;
+) ENGINE=InnoDB AUTO_INCREMENT=14 DEFAULT CHARSET=utf8mb4;
 
 --
 -- Déchargement des données de la table `orders`
@@ -217,7 +266,11 @@ INSERT INTO `orders` (`id`, `user_id`, `total_amount`, `payment_method`, `status
 (6, 1, '63500.00', 'credit', 'completed', '2025-05-09 01:45:15', NULL),
 (7, 1, '36000.00', 'credit', 'completed', '2025-05-09 02:41:17', NULL),
 (8, 1, '36000.00', 'credit', 'completed', '2025-05-09 02:45:55', NULL),
-(9, 1, '30000.00', 'credit', 'completed', '2025-05-09 02:47:45', NULL);
+(9, 1, '30000.00', 'credit', 'completed', '2025-05-09 02:47:45', NULL),
+(10, 1, '11000.00', 'credit', 'completed', '2025-05-09 14:56:20', NULL),
+(11, 1, '9500.00', 'credit', 'completed', '2025-05-09 15:03:29', NULL),
+(12, 1, '25000.00', 'credit', 'completed', '2025-05-09 15:05:15', NULL),
+(13, 1, '7500.00', 'credit', 'completed', '2025-05-09 15:08:00', NULL);
 
 -- --------------------------------------------------------
 
@@ -235,7 +288,7 @@ CREATE TABLE IF NOT EXISTS `order_items` (
   `price` decimal(10,2) NOT NULL,
   PRIMARY KEY (`id`),
   KEY `order_id` (`order_id`)
-) ENGINE=InnoDB AUTO_INCREMENT=22 DEFAULT CHARSET=utf8mb4;
+) ENGINE=InnoDB AUTO_INCREMENT=26 DEFAULT CHARSET=utf8mb4;
 
 --
 -- Déchargement des données de la table `order_items`
@@ -262,7 +315,11 @@ INSERT INTO `order_items` (`id`, `order_id`, `product_type`, `product_id`, `quan
 (18, 8, 'ssl', '1', 1, '3500.00'),
 (19, 9, 'wordpress', '1', 1, '15000.00'),
 (20, 9, 'ssl', '3', 1, '10000.00'),
-(21, 9, 'hosting', '1', 1, '5000.00');
+(21, 9, 'hosting', '1', 1, '5000.00'),
+(22, 10, 'domain', '1', 1, '11000.00'),
+(23, 11, 'domain', '1', 1, '9500.00'),
+(24, 12, 'wordpress', '2', 1, '25000.00'),
+(25, 13, 'hosting', '2', 1, '7500.00');
 
 -- --------------------------------------------------------
 
@@ -281,7 +338,7 @@ CREATE TABLE IF NOT EXISTS `password_resets` (
   PRIMARY KEY (`id`),
   UNIQUE KEY `token` (`token`),
   KEY `user_id` (`user_id`)
-) ENGINE=InnoDB AUTO_INCREMENT=8 DEFAULT CHARSET=utf8mb4;
+) ENGINE=InnoDB AUTO_INCREMENT=9 DEFAULT CHARSET=utf8mb4;
 
 --
 -- Déchargement des données de la table `password_resets`
@@ -400,7 +457,7 @@ CREATE TABLE IF NOT EXISTS `transactions` (
   `created_at` datetime NOT NULL,
   PRIMARY KEY (`id`),
   KEY `user_id` (`user_id`)
-) ENGINE=InnoDB AUTO_INCREMENT=10 DEFAULT CHARSET=utf8mb4;
+) ENGINE=InnoDB AUTO_INCREMENT=14 DEFAULT CHARSET=utf8mb4;
 
 --
 -- Déchargement des données de la table `transactions`
@@ -415,7 +472,11 @@ INSERT INTO `transactions` (`id`, `user_id`, `amount`, `type`, `description`, `c
 (6, 1, '63500.00', 'debit', 'Paiement de la commande #6', '2025-05-09 01:45:15'),
 (7, 1, '36000.00', 'debit', 'Paiement de la commande #7', '2025-05-09 02:41:17'),
 (8, 1, '36000.00', 'debit', 'Paiement de la commande #8', '2025-05-09 02:45:55'),
-(9, 1, '30000.00', 'debit', 'Paiement de la commande #9', '2025-05-09 02:47:45');
+(9, 1, '30000.00', 'debit', 'Paiement de la commande #9', '2025-05-09 02:47:45'),
+(10, 1, '11000.00', 'debit', 'Paiement de la commande #10', '2025-05-09 14:56:20'),
+(11, 1, '9500.00', 'debit', 'Paiement de la commande #11', '2025-05-09 15:03:29'),
+(12, 1, '25000.00', 'debit', 'Paiement de la commande #12', '2025-05-09 15:05:15'),
+(13, 1, '7500.00', 'debit', 'Paiement de la commande #13', '2025-05-09 15:08:00');
 
 -- --------------------------------------------------------
 
@@ -448,16 +509,14 @@ CREATE TABLE IF NOT EXISTS `users` (
   PRIMARY KEY (`id`),
   UNIQUE KEY `username` (`username`),
   UNIQUE KEY `email` (`email`)
-) ENGINE=InnoDB AUTO_INCREMENT=5 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=6 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 --
 -- Déchargement des données de la table `users`
 --
 
 INSERT INTO `users` (`id`, `fullname`, `username`, `email`, `tel`, `password`, `created_at`, `updated_at`, `profile_image`, `company`, `country`, `address`, `city`, `region`, `postal_code`, `website`, `credit`, `verification_code`, `verification_expiry`, `is_verified`) VALUES
-(1, 'TENEKEU TOSCANI', 'TOSCANI', 'toscanisoft@gmail.com', '694193493', '$2y$10$jEm29BFLEF33GkNHeK93n.csGhzYiZV1u3IBD/AYkXmk4x7PlRxeK', '2025-05-07 17:34:04', '2025-05-09 10:34:08', NULL, 'Toscanisoft', 'Cameroun', 'NKOABAN', 'Yaounde', 'Centre', '5734', 'https://toscani-tenekeu.onrender.com', '0.00', NULL, NULL, 0),
-(3, 'nc', 'nu', 'mariendabou123@gmail.com', '694193493', '$2y$10$7UQI4vx6mA0LxK9R1FVTGuCbG5ryIKWKGKfHcywmhLe3bTPpf9zhi', '2025-05-09 12:02:27', '2025-05-09 12:02:27', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, '0.00', '266493090c785167bf8073ae4c864c55', '2025-05-10 12:02:27', 0),
-(4, 'ncc', 'nuu', 'em@gmail.com', '694193493', '$2y$10$PLwoNR.xcXz8A9vX9fvdP.sJbrvH2Oxu8QKyNNns8txd46OrtnGIy', '2025-05-09 12:05:48', '2025-05-09 12:05:48', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, '0.00', NULL, NULL, 0);
+(1, 'TENEKEU TOSCANI', 'TOSCANI', 'toscanisoft@gmail.com', '694193493', '$2y$10$jEm29BFLEF33GkNHeK93n.csGhzYiZV1u3IBD/AYkXmk4x7PlRxeK', '2025-05-07 17:34:04', '2025-05-09 10:34:08', NULL, 'Toscanisoft', 'Cameroun', 'NKOABAN', 'Yaounde', 'Centre', '5734', 'https://toscani-tenekeu.onrender.com', '0.00', NULL, NULL, 0);
 
 -- --------------------------------------------------------
 
@@ -483,25 +542,14 @@ CREATE TABLE IF NOT EXISTS `user_services` (
   `updated_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
   PRIMARY KEY (`id`),
   KEY `user_id` (`user_id`)
-) ENGINE=InnoDB AUTO_INCREMENT=14 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=18 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 --
 -- Déchargement des données de la table `user_services`
 --
 
 INSERT INTO `user_services` (`id`, `user_id`, `service_type`, `service_id`, `domain_name`, `start_date`, `expiry_date`, `price`, `billing_cycle`, `status`, `auto_renew`, `connection_info`, `created_at`, `updated_at`) VALUES
-(1, 1, 'wordpress', 2, 'kmerhosting.site', '2023-05-07', '2025-08-05', '9500.00', 'quarterly', 'active', 1, '{\r\n  \"directadmin_url\": \"https://panel.kmerhosting.com:2222\",\r\n  \"directadmin_username\": \"user123\",\r\n  \"directadmin_password\": \"SecurePass123\",\r\n  \"phpmyadmin_url\": \"https://sql.kmerhosting.com/phpmyadmin\",\r\n  \"server_ip\": \"198.51.100.123\"\r\n}', '2025-05-07 22:53:48', '2025-05-08 11:58:27'),
-(2, 1, 'hosting', 4, 'kmerhosting.com', '2023-05-07', '2025-08-05', '15000.00', 'quarterly', 'pending', 1, '{\r\n  \"directadmin_url\": \"https://panel.kmerhosting.com:2222\",\r\n  \"directadmin_username\": \"kmerhost\",\r\n  \"directadmin_password\": \"SecurePass456\",\r\n  \"phpmyadmin_url\": \"https://sql.kmerhosting.com/phpmyadmin\",\r\n  \"server_ip\": \"198.51.100.124\"\r\n}', '2025-05-08 11:58:27', '2025-05-08 12:08:52'),
-(3, 1, 'ssl', 2, 'kmerhosting.com', '2023-05-07', '2025-08-05', '7000.00', 'annual', 'active', 1, NULL, '2025-05-08 11:58:27', '2025-05-08 11:58:27'),
-(5, 1, 'hosting', 1, 'test-inactive.com', '2023-05-07', '2025-08-05', '5000.00', 'quarterly', 'suspended', 1, '{\r\n  \"directadmin_url\": \"https://panel.kmerhosting.com:2222\",\r\n  \"directadmin_username\": \"suspended_user\",\r\n  \"directadmin_password\": \"InactivePass123\",\r\n  \"phpmyadmin_url\": \"https://sql.kmerhosting.com/phpmyadmin\",\r\n  \"server_ip\": \"198.51.100.125\"\r\n}', '2025-05-08 11:58:28', '2025-05-08 11:58:28'),
-(6, 1, 'hosting', 7, NULL, '2025-05-09', '2025-06-08', '60000.00', 'quarterly', 'pending', 1, NULL, '2025-05-09 00:45:15', '2025-05-09 00:49:14'),
-(7, 1, 'ssl', 1, NULL, '2025-05-09', '2026-05-09', '3500.00', 'quarterly', 'active', 1, NULL, '2025-05-09 00:45:16', '2025-05-09 00:45:16'),
-(8, 1, 'wordpress', 2, NULL, '2025-05-09', '2025-06-08', '25000.00', 'quarterly', 'pending', 1, '{\"directadmin_url\":\"https:\\/\\/panel.kmerhosting.site\",\"directadmin_username\":\"TOSCANI627\",\"directadmin_password\":\"Motdepasse@5323\",\"status\":\"Configuration en cours\"}', '2025-05-09 01:45:55', '2025-05-09 01:45:55'),
-(9, 1, 'hosting', 2, NULL, '2025-05-09', '2025-06-08', '7500.00', 'quarterly', 'pending', 1, '{\"directadmin_url\":\"https:\\/\\/panel.kmerhosting.site\",\"directadmin_username\":\"TOSCANI604\",\"directadmin_password\":\"Motdepasse@9889\",\"status\":\"Configuration en cours\"}', '2025-05-09 01:45:55', '2025-05-09 01:45:55'),
-(10, 1, 'ssl', 1, NULL, '2025-05-09', '2026-05-09', '3500.00', 'quarterly', 'pending', 1, NULL, '2025-05-09 01:45:55', '2025-05-09 01:45:55'),
-(11, 1, 'wordpress', 1, NULL, '2025-05-09', '2025-06-08', '15000.00', 'quarterly', 'pending', 1, '{\"directadmin_url\":\"https:\\/\\/panel.kmerhosting.site\",\"directadmin_username\":\"TOSCANI746\",\"directadmin_password\":\"Motdepasse@5434\",\"status\":\"Configuration en cours\"}', '2025-05-09 01:47:45', '2025-05-09 01:47:45'),
-(12, 1, 'ssl', 3, NULL, '2025-05-09', '2026-05-09', '10000.00', 'quarterly', 'pending', 1, NULL, '2025-05-09 01:47:45', '2025-05-09 01:47:45'),
-(13, 1, 'hosting', 1, NULL, '2025-05-09', '2025-06-08', '5000.00', 'quarterly', 'pending', 1, '{\"directadmin_url\":\"https:\\/\\/panel.kmerhosting.site\",\"directadmin_username\":\"TOSCANI106\",\"directadmin_password\":\"Motdepasse@1685\",\"status\":\"Configuration en cours\"}', '2025-05-09 01:47:45', '2025-05-09 01:47:45');
+(17, 1, 'hosting', 2, NULL, '2025-05-09', '2026-05-08', '7500.00', 'quarterly', 'active', 1, '{\"directadmin_url\":\"https:\\/\\/panel.kmerhosting.site\",\"directadmin_username\":\"TOSCANI539\",\"directadmin_password\":\"Motdepasse@7800\",\"status\":\"Configuration en cours\"}', '2025-05-09 14:08:00', '2025-05-09 14:51:50');
 
 -- --------------------------------------------------------
 
@@ -526,7 +574,7 @@ CREATE TABLE IF NOT EXISTS `user_settings` (
   `updated_at` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
   PRIMARY KEY (`id`),
   UNIQUE KEY `user_id` (`user_id`)
-) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8mb4;
+) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8mb4;
 
 --
 -- Déchargement des données de la table `user_settings`

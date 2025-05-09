@@ -925,8 +925,21 @@ document.addEventListener('DOMContentLoaded', function() {
                             });
                         }
                         
-                        // Afficher une alerte JavaScript
-                        alert('Produit ajouté au panier');
+                        // Afficher une notification SweetAlert2
+                        Swal.fire({
+                            title: 'Produit ajouté!',
+                            text: 'Le produit a été ajouté à votre panier',
+                            icon: 'success',
+                            confirmButtonText: 'Continuer',
+                            confirmButtonColor: '#10b981',
+                            background: '#1e293b',
+                            color: '#fff',
+                            toast: true,
+                            position: 'top-end',
+                            showConfirmButton: false,
+                            timer: 3000,
+                            timerProgressBar: true
+                        });
                     } else {
                         alert('Erreur: ' + data.message);
                     }

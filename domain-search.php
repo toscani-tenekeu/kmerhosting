@@ -26,7 +26,7 @@ $popularDomains = array_slice($allDomains, 0, 5);
 // Titre de la page
 $pageTitle = "Recherche de Domaines - KmerHosting";
 
-require_once 'includes/header.php';
+require_once 'includes/domain_search_header.php';
 ?>
 
 <!-- Main Content -->
@@ -38,7 +38,7 @@ require_once 'includes/header.php';
         
         <div class="container mx-auto px-4 relative z-10">
             <div class="max-w-4xl mx-auto text-center">
-                <h1 class="text-4xl md:text-5xl font-bold mb-6 glitch-text" data-text="Trouvez le Domaine Parfait">Trouvez le Domaine Parfait</h1>
+                <h1 class="text-4xl md:text-5xl font-bold mb-6 text-white">Trouvez le Domaine Parfait</h1>
                 <p class="text-xl mb-8 text-blue-100">Vérifiez la disponibilité de votre nom de domaine et sécurisez-le dès maintenant.</p>
                 
                 <div class="bg-white/10 backdrop-blur-md rounded-2xl shadow-lg p-8 mb-8 border border-white/20">
@@ -209,168 +209,6 @@ require_once 'includes/header.php';
 <script src="https://cdnjs.cloudflare.com/ajax/libs/particles.js/2.0.0/particles.min.js"></script>
 
 <style>
-/* Styles pour l'animation futuriste */
-.glitch-text {
-    position: relative;
-    animation: glitch 3s infinite;
-}
-
-.glitch-text::before,
-.glitch-text::after {
-    content: attr(data-text);
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-}
-
-.glitch-text::before {
-    left: 2px;
-    text-shadow: -2px 0 #ff00ff;
-    clip: rect(44px, 450px, 56px, 0);
-    animation: glitch-anim 5s infinite linear alternate-reverse;
-}
-
-.glitch-text::after {
-    left: -2px;
-    text-shadow: -2px 0 #00ffff;
-    clip: rect(44px, 450px, 56px, 0);
-    animation: glitch-anim2 5s infinite linear alternate-reverse;
-}
-
-@keyframes glitch-anim {
-    0% {
-        clip: rect(31px, 9999px, 94px, 0);
-    }
-    5% {
-        clip: rect(70px, 9999px, 71px, 0);
-    }
-    10% {
-        clip: rect(29px, 9999px, 83px, 0);
-    }
-    15% {
-        clip: rect(16px, 9999px, 91px, 0);
-    }
-    20% {
-        clip: rect(2px, 9999px, 23px, 0);
-    }
-    25% {
-        clip: rect(46px, 9999px, 25px, 0);
-    }
-    30% {
-        clip: rect(31px, 9999px, 86px, 0);
-    }
-    35% {
-        clip: rect(96px, 9999px, 58px, 0);
-    }
-    40% {
-        clip: rect(14px, 9999px, 4px, 0);
-    }
-    45% {
-        clip: rect(60px, 9999px, 53px, 0);
-    }
-    50% {
-        clip: rect(82px, 9999px, 28px, 0);
-    }
-    55% {
-        clip: rect(64px, 9999px, 58px, 0);
-    }
-    60% {
-        clip: rect(75px, 9999px, 57px, 0);
-    }
-    65% {
-        clip: rect(54px, 9999px, 84px, 0);
-    }
-    70% {
-        clip: rect(45px, 9999px, 39px, 0);
-    }
-    75% {
-        clip: rect(56px, 9999px, 98px, 0);
-    }
-    80% {
-        clip: rect(66px, 9999px, 96px, 0);
-    }
-    85% {
-        clip: rect(40px, 9999px, 88px, 0);
-    }
-    90% {
-        clip: rect(44px, 9999px, 51px, 0);
-    }
-    95% {
-        clip: rect(44px, 9999px, 24px, 0);
-    }
-    100% {
-        clip: rect(54px, 9999px, 86px, 0);
-    }
-}
-
-@keyframes glitch-anim2 {
-    0% {
-        clip: rect(65px, 9999px, 100px, 0);
-    }
-    5% {
-        clip: rect(52px, 9999px, 74px, 0);
-    }
-    10% {
-        clip: rect(79px, 9999px, 85px, 0);
-    }
-    15% {
-        clip: rect(75px, 9999px, 5px, 0);
-    }
-    20% {
-        clip: rect(67px, 9999px, 61px, 0);
-    }
-    25% {
-        clip: rect(14px, 9999px, 79px, 0);
-    }
-    30% {
-        clip: rect(1px, 9999px, 66px, 0);
-    }
-    35% {
-        clip: rect(86px, 9999px, 30px, 0);
-    }
-    40% {
-        clip: rect(23px, 9999px, 98px, 0);
-    }
-    45% {
-        clip: rect(85px, 9999px, 72px, 0);
-    }
-    50% {
-        clip: rect(71px, 9999px, 75px, 0);
-    }
-    55% {
-        clip: rect(2px, 9999px, 48px, 0);
-    }
-    60% {
-        clip: rect(30px, 9999px, 16px, 0);
-    }
-    65% {
-        clip: rect(59px, 9999px, 50px, 0);
-    }
-    70% {
-        clip: rect(41px, 9999px, 62px, 0);
-    }
-    75% {
-        clip: rect(2px, 9999px, 82px, 0);
-    }
-    80% {
-        clip: rect(47px, 9999px, 73px, 0);
-    }
-    85% {
-        clip: rect(3px, 9999px, 27px, 0);
-    }
-    90% {
-        clip: rect(26px, 9999px, 55px, 0);
-    }
-    95% {
-        clip: rect(42px, 9999px, 97px, 0);
-    }
-    100% {
-        clip: rect(38px, 9999px, 49px, 0);
-    }
-}
-
 .cyber-button {
     position: relative;
     overflow: hidden;
@@ -911,6 +749,12 @@ document.addEventListener("DOMContentLoaded", () => {
     }
 });
 </script>
+
+<div class="text-center mt-8">
+    <a href="../index.php#packages" class="inline-block bg-kmergreen hover:bg-kmergreen-dark text-white font-medium py-2 px-4 rounded-lg transition duration-300">
+        Découvrir nos offres
+    </a>
+</div>
 
 <?php
 require_once 'includes/footer.php';

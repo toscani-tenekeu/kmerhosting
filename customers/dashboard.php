@@ -349,8 +349,8 @@ $userCredit = getUserCredit($user_id);
                                                 </td>
                                                 <td class="py-4 text-white"><?php echo number_format($item['price'] ?? 0, 0, ',', ' '); ?> FCFA</td>
                                                 <td class="py-4 text-right">
-                                                    <button onclick="removeFromCart(<?php echo $item['id']; ?>)" class="text-red-600 hover:text-red-900">
-                                                        Supprimer
+                                                    <button onclick="removeFromCart(<?php echo $item['id']; ?>)" class="p-2 bg-red-900/30 hover:bg-red-800/50 text-red-400 rounded-lg transition-all duration-300 hover:scale-110 focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-opacity-50">
+                                                        <i class="fas fa-trash-alt"></i>
                                                     </button>
                                                 </td>
                                             </tr>
@@ -486,24 +486,79 @@ $userCredit = getUserCredit($user_id);
 
         // Fonction pour supprimer un article du panier
         function removeFromCart(itemId) {
-            if (confirm('Voulez-vous vraiment supprimer cet article ?')) {
-                fetch('../backend/cart/remove_from_cart.php', {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/x-www-form-urlencoded',
-                    },
-                    body: `item_id=${itemId}`
-                })
-                .then(response => response.json())
-                .then(data => {
-                    if (data.status === 'success') {
+    Swal.fire({
+        title: 'Êtes-vous sûr?',
+        text: "Voulez-vous supprimer cet article de votre panier?",
+        icon: 'warning',
+        showCancelButton: true,
+        confirmButtonColor: '#10b981',
+        cancelButtonColor: '#475569',
+        confirmButtonText: 'Oui, supprimer',
+        cancelButtonText: 'Annuler',
+        background: '#1e293b',
+        color: '#fff'
+    }).then((result) => {
+        if (result.isConfirmed) {
+            // Afficher un indicateur de chargement
+            Swal.fire({
+                title: 'Suppression en cours...',
+                text: 'Veuillez patienter',
+                allowOutsideClick: false,
+                didOpen: () => {
+                    Swal.showLoading();
+                },
+                background: '#1e293b',
+                color: '#fff'
+            });
+            
+            fetch('../backend/cart/remove_from_cart.php', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/x-www-form-urlencoded',
+                },
+                body: `item_id=${itemId}`
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.status === 'success') {
+                    // Afficher un message de succès
+                    Swal.fire({
+                        title: 'Supprimé!',
+                        text: 'L\'article a été supprimé de votre panier',
+                        icon: 'success',
+                        confirmButtonColor: '#10b981',
+                        background: '#1e293b',
+                        color: '#fff',
+                        timer: 1500,
+                        showConfirmButton: false
+                    }).then(() => {
                         location.reload();
-                    } else {
-                        alert('Erreur lors de la suppression de l\'article');
-                    }
+                    });
+                } else {
+                    Swal.fire({
+                        title: 'Erreur!',
+                        text: data.message || 'Erreur lors de la suppression de l\'article',
+                        icon: 'error',
+                        confirmButtonColor: '#10b981',
+                        background: '#1e293b',
+                        color: '#fff'
+                    });
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                Swal.fire({
+                    title: 'Erreur!',
+                    text: 'Une erreur est survenue lors de la suppression',
+                    icon: 'error',
+                    confirmButtonColor: '#10b981',
+                    background: '#1e293b',
+                    color: '#fff'
                 });
-            }
+            });
         }
+    });
+}
     </script>
 </body>
 </html>
