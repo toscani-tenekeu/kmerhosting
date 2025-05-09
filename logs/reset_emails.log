@@ -1,0 +1,58 @@
+2025-05-09 08:47:19 - Email pour toscanisoft@gmail.com avec token 60d7d995ff8e5f9545f174ee8dca9406
+
+    <html>
+    <head>
+        <title>Réinitialisation de votre mot de passe</title>
+    </head>
+    <body style='font-family: Arial, sans-serif; line-height: 1.6; color: #333;'>
+        <div style='max-width: 600px; margin: 0 auto; padding: 20px; border: 1px solid #eee; border-radius: 10px;'>
+            <div style='text-align: center; margin-bottom: 20px;'>
+                <img src='https://localhost/assets/images/logo.png' alt='KmerHosting Logo' style='max-width: 200px;'>
+            </div>
+            <h2 style='color: #004a6e; text-align: center;'>Réinitialisation de votre mot de passe</h2>
+            <p>Bonjour,</p>
+            <p>Vous avez demandé la réinitialisation de votre mot de passe sur KmerHosting. Veuillez cliquer sur le lien ci-dessous pour créer un nouveau mot de passe :</p>
+            <p style='text-align: center;'>
+                <a href='https://localhost/reset-password.php?token=60d7d995ff8e5f9545f174ee8dca9406' style='display: inline-block; background-color: #10b981; color: white; padding: 12px 24px; text-decoration: none; border-radius: 5px; font-weight: bold;'>Réinitialiser mon mot de passe</a>
+            </p>
+            <p>Si vous n'avez pas demandé cette réinitialisation, veuillez ignorer cet email.</p>
+            <p>Ce lien expirera dans 24 heures pour des raisons de sécurité.</p>
+            <p>Cordialement,<br>L'équipe KmerHosting</p>
+            <div style='margin-top: 30px; padding-top: 20px; border-top: 1px solid #eee; text-align: center; font-size: 12px; color: #777;'>
+                <p>© 2023 KmerHosting. Tous droits réservés.</p>
+                <p>Ceci est un email automatique, merci de ne pas y répondre.</p>
+            </div>
+        </div>
+    </body>
+    </html>
+    
+
+2025-05-09 08:52:47 - Email pour toscanisoft@gmail.com avec token 07dd806f45221d458fb23782594091e8
+
+        <html>
+        <head>
+            <title>Réinitialisation de votre mot de passe</title>
+        </head>
+        <body style='font-family: Arial, sans-serif; line-height: 1.6; color: #333;'>
+            <div style='max-width: 600px; margin: 0 auto; padding: 20px; border: 1px solid #eee; border-radius: 10px;'>
+                <div style='text-align: center; margin-bottom: 20px;'>
+                    <img src='https://localhost/assets/images/logo.png' alt='KmerHosting Logo' style='max-width: 200px;'>
+                </div>
+                <h2 style='color: #004a6e; text-align: center;'>Réinitialisation de votre mot de passe</h2>
+                <p>Bonjour,</p>
+                <p>Vous avez demandé la réinitialisation de votre mot de passe sur KmerHosting. Veuillez cliquer sur le lien ci-dessous pour créer un nouveau mot de passe :</p>
+                <p style='text-align: center;'>
+                    <a href='https://localhost/reset-password.php?token=07dd806f45221d458fb23782594091e8' style='display: inline-block; background-color: #10b981; color: white; padding: 12px 24px; text-decoration: none; border-radius: 5px; font-weight: bold;'>Réinitialiser mon mot de passe</a>
+                </p>
+                <p>Si vous n'avez pas demandé cette réinitialisation, veuillez ignorer cet email.</p>
+                <p>Ce lien expirera dans 24 heures pour des raisons de sécurité.</p>
+                <p>Cordialement,<br>L'équipe KmerHosting</p>
+                <div style='margin-top: 30px; padding-top: 20px; border-top: 1px solid #eee; text-align: center; font-size: 12px; color: #777;'>
+                    <p>© 2023 KmerHosting. Tous droits réservés.</p>
+                    <p>Ceci est un email automatique, merci de ne pas y répondre.</p>
+                </div>
+            </div>
+        </body>
+        </html>
+        
+
