@@ -1,16 +1,32 @@
 <?php
-// Démarrer la session
 session_start();
+require_once __DIR__ . '/../config/db.php';
 
-// Rediriger si l'utilisateur est déjà connecté
-if (isset($_SESSION['logged_in']) && $_SESSION['logged_in'] === true) {
-    header('Location: customers/dashboard.php');
+if ($_SERVER["REQUEST_METHOD"] != "POST") {
+    header("Location: ../../login.php");
     exit;
 }
 
-// Stocker l'URL de redirection si elle est fournie
-if (isset($_GET['redirect']) && !empty($_GET['redirect'])) {
-    $_SESSION['redirect_after_login'] = $_GET['redirect'];
+$email = $_POST['email'] ?? '';
+$password = $_POST['password'] ?? '';
+
+if (empty($email) || empty($password)) {
+    header("Location: ../../login.php?error=Veuillez remplir tous les champs");
+    exit;
+}
+
+$stmt = $pdo->prepare("SELECT * FROM users WHERE email = ?");
+$stmt->execute([$email]);
+$user = $stmt->fetch();
+
+if ($user && password_verify($password, $user['password'])) {
+    $_SESSION['user_id'] = $user['id'];
+    $_SESSION['logged_in'] = true;
+    header("Location: ../../customers/dashboard.php");
+    exit;
+} else {
+    header("Location: ../../login.php?error=Email ou mot de passe incorrect");
+    exit;
 }
 ?>
 <!DOCTYPE html>
@@ -19,10 +35,10 @@ if (isset($_GET['redirect']) && !empty($_GET['redirect'])) {
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Connexion - KmerHosting.site</title>
-  
+
   <!-- Favicon -->
   <link rel="icon" type="image/x-icon" href="assets/images/favicon.png">
-  
+
   <!-- Tailwind CSS via CDN -->
   <script src="https://cdn.tailwindcss.com"></script>
   <script>
@@ -45,10 +61,10 @@ if (isset($_GET['redirect']) && !empty($_GET['redirect'])) {
           }
       }
   </script>
-  
+
   <!-- Font Awesome -->
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-  
+
   <!-- SweetAlert2 -->
   <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 </head>
@@ -58,15 +74,15 @@ if (isset($_GET['redirect']) && !empty($_GET['redirect'])) {
     <a href="index.php" class="absolute top-4 left-4 text-white hover:text-kmergreen-light flex items-center">
       <i class="fas fa-arrow-left mr-2"></i> Retour à l'accueil
     </a>
-    
+
     <div class="max-w-md w-full flex flex-col items-center">
       <div class="mb-8">
         <img src="assets/images/logo.png" alt="KmerHosting Logo" class="h-20 mb-6">
       </div>
-      
+
       <h1 class="text-3xl md:text-4xl font-bold mb-4 text-center">Bienvenue sur KmerHosting</h1>
       <p class="text-xl text-center mb-8">Votre compte Toscanisoft vous donne accès à tous nos produits et services (KamerHosting, CV Builder, etc)</p>
-      
+
       <div class="w-full max-w-sm bg-kmergreen bg-opacity-30 p-6 rounded-lg backdrop-blur-sm">
         <h2 class="text-xl font-semibold mb-4">Pourquoi choisir KmerHosting?</h2>
         <ul class="space-y-3">
@@ -90,13 +106,13 @@ if (isset($_GET['redirect']) && !empty($_GET['redirect'])) {
       </div>
     </div>
   </div>
-  
+
   <!-- Right Side - Login Form -->
   <div class="md:w-1/2 flex items-center justify-center p-8">
     <div class="max-w-md w-full">
       <div class="bg-white rounded-lg shadow-lg p-8">
         <h2 class="text-2xl font-bold text-gray-800 mb-6 text-center">Connexion</h2>
-        
+
         <?php if (isset($_GET['error'])): ?>
           <div class="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded mb-4">
             <?php echo htmlspecialchars($_GET['error']); ?>
@@ -106,7 +122,7 @@ if (isset($_GET['redirect']) && !empty($_GET['redirect'])) {
             <?php echo htmlspecialchars($_GET['success']); ?>
           </div>
         <?php endif; ?>
-        
+
         <form id="login-form" action="backend/auth/login.php" method="POST">
           <div class="mb-4">
             <label for="email" class="block text-gray-700 font-medium mb-2">Adresse email</label>
@@ -118,7 +134,7 @@ if (isset($_GET['redirect']) && !empty($_GET['redirect'])) {
                      class="w-full pl-10 px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-kmergreen">
             </div>
           </div>
-          
+
           <div class="mb-6">
             <label for="password" class="block text-gray-700 font-medium mb-2">Mot de passe</label>
             <div class="relative">
@@ -132,7 +148,7 @@ if (isset($_GET['redirect']) && !empty($_GET['redirect'])) {
               </button>
             </div>
           </div>
-          
+
           <div class="flex items-center justify-between mb-6">
             <label class="flex items-center">
               <input type="checkbox" class="form-checkbox h-4 w-4 text-kmergreen">
@@ -140,12 +156,12 @@ if (isset($_GET['redirect']) && !empty($_GET['redirect'])) {
             </label>
             <a href="#" id="forgot-password-link" class="text-sm text-kmergreen hover:underline">Mot de passe oublié ?</a>
           </div>
-          
+
           <button type="submit" class="w-full bg-kmergreen hover:bg-kmergreen-dark text-white font-medium py-2 px-4 rounded-lg transition duration-300 flex items-center justify-center">
             <i class="fas fa-sign-in-alt mr-2"></i> Se connecter
           </button>
         </form>
-        
+
         <div class="mt-6 text-center">
           <p class="text-gray-600 mb-4">Nouveau sur Toscanisoft ?</p>
           <a href="register.php" class="block w-full text-center bg-white border border-kmergreen text-kmergreen hover:bg-kmergreen-light hover:bg-opacity-10 font-medium py-2 px-4 rounded-lg transition duration-300">
@@ -153,7 +169,7 @@ if (isset($_GET['redirect']) && !empty($_GET['redirect'])) {
           </a>
         </div>
       </div>
-      
+
       <div class="mt-6 text-center text-gray-500 text-sm">
         <p>© 2023 KmerHosting. Tous droits réservés.</p>
         <div class="mt-2 flex justify-center space-x-4">
@@ -163,14 +179,14 @@ if (isset($_GET['redirect']) && !empty($_GET['redirect'])) {
       </div>
     </div>
   </div>
-  
+
   <!-- Modal de récupération de mot de passe -->
   <div id="forgot-password-modal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 hidden">
     <div class="bg-white rounded-lg shadow-xl max-w-md w-full p-6 relative">
       <button id="close-forgot-modal" class="absolute top-4 right-4 text-gray-400 hover:text-gray-600">
         <i class="fas fa-times text-xl"></i>
       </button>
-      
+
       <div class="text-center mb-6">
         <div class="inline-flex items-center justify-center w-16 h-16 rounded-full bg-kmergreen bg-opacity-10 text-kmergreen mb-4">
           <i class="fas fa-key text-2xl"></i>
@@ -178,7 +194,7 @@ if (isset($_GET['redirect']) && !empty($_GET['redirect'])) {
         <h3 class="text-xl font-bold text-gray-800">Récupération de mot de passe</h3>
         <p class="text-gray-600 mt-2">Choisissez une méthode pour récupérer votre mot de passe</p>
       </div>
-      
+
       <form id="forgot-password-form" class="space-y-4">
         <div class="mb-4">
           <label for="recovery-email" class="block text-gray-700 font-medium mb-2">Votre adresse email</label>
@@ -190,10 +206,10 @@ if (isset($_GET['redirect']) && !empty($_GET['redirect'])) {
                    class="w-full pl-10 px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-kmergreen">
           </div>
         </div>
-        
+
         <div class="space-y-3">
           <p class="font-medium text-gray-700">Méthode de récupération:</p>
-          
+
           <button type="button" class="recovery-option w-full flex items-center p-3 border border-gray-300 rounded-lg hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-kmergreen transition duration-200" data-method="email">
             <div class="w-10 h-10 rounded-full bg-blue-100 flex items-center justify-center mr-3">
               <i class="fas fa-envelope text-blue-500"></i>
@@ -203,7 +219,7 @@ if (isset($_GET['redirect']) && !empty($_GET['redirect'])) {
               <p class="text-sm text-gray-500">Recevoir un lien de réinitialisation par email</p>
             </div>
           </button>
-          
+
           <button type="button" class="recovery-option w-full flex items-center p-3 border border-gray-300 rounded-lg hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-kmergreen transition duration-200" data-method="whatsapp">
             <div class="w-10 h-10 rounded-full bg-green-100 flex items-center justify-center mr-3">
               <i class="fab fa-whatsapp text-green-500"></i>
@@ -213,7 +229,7 @@ if (isset($_GET['redirect']) && !empty($_GET['redirect'])) {
               <p class="text-sm text-gray-500">Recevoir un code de réinitialisation par WhatsApp</p>
             </div>
           </button>
-          
+
           <button type="button" class="recovery-option w-full flex items-center p-3 border border-gray-300 rounded-lg hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-kmergreen transition duration-200" data-method="code">
             <div class="w-10 h-10 rounded-full bg-purple-100 flex items-center justify-center mr-3">
               <i class="fas fa-shield-alt text-purple-500"></i>
@@ -224,7 +240,7 @@ if (isset($_GET['redirect']) && !empty($_GET['redirect'])) {
             </div>
           </button>
         </div>
-        
+
         <div id="recovery-code-input" class="hidden mt-4">
           <label for="reset-code" class="block text-gray-700 font-medium mb-2">Code de réinitialisation</label>
           <div class="relative">
@@ -235,14 +251,14 @@ if (isset($_GET['redirect']) && !empty($_GET['redirect'])) {
                    class="w-full pl-10 px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-kmergreen">
           </div>
         </div>
-        
+
         <button type="submit" id="submit-recovery" class="w-full bg-kmergreen hover:bg-kmergreen-dark text-white font-medium py-3 px-4 rounded-lg transition duration-300 flex items-center justify-center mt-6">
           <i class="fas fa-paper-plane mr-2"></i> Envoyer la demande
         </button>
       </form>
     </div>
   </div>
-  
+
   <script>
     // Affichage/masquage mot de passe
     document.addEventListener('DOMContentLoaded', function() {
@@ -255,7 +271,7 @@ if (isset($_GET['redirect']) && !empty($_GET['redirect'])) {
         passwordInput.type = show ? 'text' : 'password';
         toggleBtn.innerHTML = show ? '<i class="fas fa-eye-slash"></i>' : '<i class="fas fa-eye"></i>';
       });
-      
+
       // Gestion du modal de récupération de mot de passe
       const forgotPasswordLink = document.getElementById('forgot-password-link');
       const forgotPasswordModal = document.getElementById('forgot-password-modal');
@@ -263,39 +279,39 @@ if (isset($_GET['redirect']) && !empty($_GET['redirect'])) {
       const recoveryOptions = document.querySelectorAll('.recovery-option');
       const recoveryCodeInput = document.getElementById('recovery-code-input');
       const forgotPasswordForm = document.getElementById('forgot-password-form');
-      
+
       // Ouvrir le modal
       forgotPasswordLink.addEventListener('click', function(e) {
         e.preventDefault();
         forgotPasswordModal.classList.remove('hidden');
       });
-      
+
       // Fermer le modal
       closeForgotModal.addEventListener('click', function() {
         forgotPasswordModal.classList.add('hidden');
       });
-      
+
       // Fermer le modal en cliquant à l'extérieur
       window.addEventListener('click', function(e) {
         if (e.target === forgotPasswordModal) {
           forgotPasswordModal.classList.add('hidden');
         }
       });
-      
+
       // Gestion des options de récupération
       let selectedMethod = null;
-      
+
       recoveryOptions.forEach(option => {
         option.addEventListener('click', function() {
           // Réinitialiser toutes les options
           recoveryOptions.forEach(opt => {
             opt.classList.remove('ring-2', 'ring-kmergreen', 'bg-gray-50');
           });
-          
+
           // Sélectionner l'option actuelle
           this.classList.add('ring-2', 'ring-kmergreen', 'bg-gray-50');
           selectedMethod = this.getAttribute('data-method');
-          
+
           // Afficher le champ de code si nécessaire
           if (selectedMethod === 'code') {
             recoveryCodeInput.classList.remove('hidden');
@@ -304,11 +320,11 @@ if (isset($_GET['redirect']) && !empty($_GET['redirect'])) {
           }
         });
       });
-      
+
       // Soumission du formulaire
       forgotPasswordForm.addEventListener('submit', function(e) {
         e.preventDefault();
-        
+
         if (!selectedMethod) {
           Swal.fire({
             title: 'Attention',
@@ -318,9 +334,9 @@ if (isset($_GET['redirect']) && !empty($_GET['redirect'])) {
           });
           return;
         }
-        
+
         const email = document.getElementById('recovery-email').value;
-        
+
         if (!email) {
           Swal.fire({
             title: 'Attention',
@@ -330,7 +346,7 @@ if (isset($_GET['redirect']) && !empty($_GET['redirect'])) {
           });
           return;
         }
-        
+
         // Simulation de l'envoi de la demande
         Swal.fire({
           title: 'Traitement en cours',
@@ -340,11 +356,11 @@ if (isset($_GET['redirect']) && !empty($_GET['redirect'])) {
             Swal.showLoading();
           }
         });
-        
+
         // Simuler un délai de traitement
         setTimeout(() => {
           let title, text, icon;
-          
+
           switch(selectedMethod) {
             case 'email':
               title = 'Email envoyé';
@@ -373,7 +389,7 @@ if (isset($_GET['redirect']) && !empty($_GET['redirect'])) {
               }
               break;
           }
-          
+
           Swal.fire({
             title: title,
             text: text,

@@ -107,7 +107,7 @@ if (isset($_GET['redirect']) && !empty($_GET['redirect'])) {
           </div>
         <?php endif; ?>
         
-        <form id="login-form" action="backend/auth/login.php" method="POST">
+        <form id="login-form" action="backend/auth/login.php" method="POST" class="space-y-4">
           <div class="mb-4">
             <label for="email" class="block text-gray-700 font-medium mb-2">Adresse email</label>
             <div class="relative">
@@ -214,15 +214,7 @@ if (isset($_GET['redirect']) && !empty($_GET['redirect'])) {
             </div>
           </button>
           
-          <button type="button" class="recovery-option w-full flex items-center p-3 border border-gray-300 rounded-lg hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-kmergreen transition duration-200" data-method="code">
-            <div class="w-10 h-10 rounded-full bg-purple-100 flex items-center justify-center mr-3">
-              <i class="fas fa-shield-alt text-purple-500"></i>
-            </div>
-            <div class="text-left">
-              <h4 class="font-medium text-gray-800">Code de réinitialisation</h4>
-              <p class="text-sm text-gray-500">Utiliser un code de réinitialisation prédéfini</p>
-            </div>
-          </button>
+          
         </div>
         
         <div id="recovery-code-input" class="hidden mt-4">

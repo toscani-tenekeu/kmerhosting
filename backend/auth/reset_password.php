@@ -36,15 +36,31 @@ try {
 
     // Fonction pour envoyer un email de réinitialisation
     function sendResetEmail($email, $token) {
-        $resetLink = "https://" . $_SERVER['HTTP_HOST'] . "/reset-password.php?token=" . $token;
+        require '../../vendor/autoload.php';
         
-        // En-têtes de l'email
-        $headers = "MIME-Version: 1.0" . "\r\n";
-        $headers .= "Content-type:text/html;charset=UTF-8" . "\r\n";
-        $headers .= "From: KmerHosting <noreply@kmerhosting.site>" . "\r\n";
+        $mail = new PHPMailer\PHPMailer\PHPMailer(true);
         
-        // Sujet de l'email
-        $subject = "Réinitialisation de votre mot de passe KmerHosting";
+        try {
+            // Server settings
+            $mail->isSMTP();
+            $mail->Host = 'mail.kmerhosting.site';
+            $mail->SMTPAuth = true;
+            $mail->Username = 'noreply@kmerhosting.site';
+            $mail->Password = 'YOUR_EMAIL_PASSWORD'; // Replace with actual password
+            $mail->SMTPSecure = PHPMailer\PHPMailer\PHPMailer::ENCRYPTION_STARTTLS;
+            $mail->Port = 587;
+
+            // Recipients
+            $mail->setFrom('noreply@kmerhosting.site', 'KmerHosting');
+            $mail->addAddress($email);
+
+            // For local development
+            $resetLink = "http://127.0.0.1:5000/reset-password.php?token=" . $token;
+            
+            // Email content
+            $mail->isHTML(true);
+            $mail->Subject = 'Réinitialisation de votre mot de passe KmerHosting';
+            $mail->CharSet = 'UTF-8';
         
         // Corps de l'email en HTML
         $message = "
@@ -52,10 +68,10 @@ try {
         <head>
             <title>Réinitialisation de votre mot de passe</title>
         </head>
-        <body style='font-family: Arial, sans-serif; line-height: 1.6; color: #333;'>
-            <div style='max-width: 600px; margin: 0 auto; padding: 20px; border: 1px solid #eee; border-radius: 10px;'>
-                <div style='text-align: center; margin-bottom: 20px;'>
-                    <img src='https://{$_SERVER['HTTP_HOST']}/assets/images/logo.png' alt='KmerHosting Logo' style='max-width: 200px;'>
+        <body style='font-family: Arial, sans-serif; line-height: 1.6; color: #333; background-color: #f3f4f6;'>
+            <div style='max-width: 600px; margin: 20px auto; padding: 30px; background-color: white; border-radius: 15px; box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);'>
+                <div style='text-align: center; margin-bottom: 30px;'>
+                    <img src='https://kmerhosting.site/assets/images/logo.png' alt='KmerHosting Logo' style='max-width: 200px; height: auto;'>
                 </div>
                 <h2 style='color: #004a6e; text-align: center;'>Réinitialisation de votre mot de passe</h2>
                 <p>Bonjour,</p>
@@ -75,12 +91,11 @@ try {
         </html>
         ";
         
-        // Essayer d'envoyer l'email avec mail() d'abord
-        $mailSent = mail($email, $subject, $message, $headers);
-        
-        // Si mail() échoue, enregistrer l'erreur mais indiquer que l'envoi a réussi pour l'UX
-        if (!$mailSent) {
-            error_log("Erreur lors de l'envoi de l'email à $email pour réinitialisation de mot de passe");
+        $mail->Body = $message;
+            $mail->send();
+            return true;
+        } catch (Exception $e) {
+            error_log("Erreur lors de l'envoi de l'email à $email: " . $mail->ErrorInfo);
             
             // En environnement de développement, on pourrait sauvegarder l'email à un endroit pour le tester
             $logFile = __DIR__ . '/../../logs/reset_emails.log';
