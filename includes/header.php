@@ -152,7 +152,7 @@ $cartItemCount = $isLoggedIn ? getCartItemCount($_SESSION['user_id']) : 0;
                     <a href="#services" class="text-kmerblue hover:text-kmergreen font-medium">Nos Services</a>
                     <a href="#technologies" class="text-kmerblue hover:text-kmergreen font-medium">Technologies</a>
                     <a href="#packages" class="text-kmerblue hover:text-kmergreen font-medium">Nos Packs</a>
-                    <a href="domaines.php" class="text-kmerblue hover:text-kmergreen font-medium">Nom de Domaines</a>
+                    <a href="domain-search.php" class="text-kmerblue hover:text-kmergreen font-medium">Nom de Domaines</a>
                     <a href="contact.php" class="text-kmerblue hover:text-kmergreen font-medium">Contact</a>
                 </nav>
 
@@ -188,7 +188,7 @@ $cartItemCount = $isLoggedIn ? getCartItemCount($_SESSION['user_id']) : 0;
                     <a href="#services" class="text-kmerblue hover:text-kmergreen font-medium">Nos Services</a>
                     <a href="#technologies" class="text-kmerblue hover:text-kmergreen font-medium">Technologies</a>
                     <a href="#packages" class="text-kmerblue hover:text-kmergreen font-medium">Nos Packs</a>
-                    <a href="domaines.php" class="text-kmerblue hover:text-kmergreen font-medium">Nom de Domaines</a>
+                    <a href="domain-search.php" class="text-kmerblue hover:text-kmergreen font-medium">Nom de Domaines</a>
                     <a href="contact.php" class="text-kmerblue hover:text-kmergreen font-medium">Contact</a>
                     <?php if(isset($_SESSION['user_id'])): ?>
                         <a href="customers/dashboard.php"

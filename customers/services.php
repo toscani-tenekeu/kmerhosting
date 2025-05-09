@@ -421,10 +421,7 @@ $userServices = getUserServices($_SESSION['user_id']);
                                                 <i class="fas fa-server mr-2"></i>
                                                 DirectAdmin
                                             </a>
-                                            <a href="<?php echo htmlspecialchars($connectionInfo['phpmyadmin_url']); ?>" target="_blank" class="px-4 py-2 bg-dark-700 hover:bg-dark-600 text-white rounded-md transition-colors flex items-center">
-                                                <i class="fas fa-database mr-2"></i>
-                                                PHPMyAdmin
-                                            </a>
+                                         
                                             <button onclick="showConnectionInfo(<?php echo htmlspecialchars(json_encode($connectionInfo)); ?>)" class="px-4 py-2 bg-dark-700 hover:bg-dark-600 text-white rounded-md transition-colors flex items-center">
                                                 <i class="fas fa-key mr-2"></i>
                                                 Identifiants
@@ -434,10 +431,7 @@ $userServices = getUserServices($_SESSION['user_id']);
                                                 <i class="fas fa-server mr-2"></i>
                                                 DirectAdmin
                                             </button>
-                                            <button disabled class="px-4 py-2 bg-dark-800 text-gray-500 rounded-md cursor-not-allowed flex items-center opacity-50">
-                                                <i class="fas fa-database mr-2"></i>
-                                                PHPMyAdmin
-                                            </button>
+                                           
                                             <button disabled class="px-4 py-2 bg-dark-800 text-gray-500 rounded-md cursor-not-allowed flex items-center opacity-50">
                                                 <i class="fas fa-key mr-2"></i>
                                                 Identifiants
@@ -652,15 +646,7 @@ $userServices = getUserServices($_SESSION['user_id']);
                             </button>
                         </div>
                     </div>
-                    <div class="mb-4">
-                        <p class="text-sm text-gray-400 mb-1">Adresse IP du serveur</p>
-                        <div class="flex items-center">
-                            <input type="text" value="${connectionInfo.server_ip}" readonly class="bg-dark-900 text-white p-2 rounded w-full mr-2">
-                            <button onclick="copyToClipboard('${connectionInfo.server_ip}')" class="p-2 bg-dark-700 hover:bg-dark-600 rounded">
-                                <i class="fas fa-copy"></i>
-                            </button>
-                        </div>
-                    </div>
+                    <!-- Information de serveur supprimée pour des raisons de sécurité -->
                 </div>
                 `;
                 

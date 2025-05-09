@@ -92,12 +92,14 @@ function getUserCartItems($user_id) {
                 WHEN c.product_type = 'hosting' THEN hp.name
                 WHEN c.product_type = 'wordpress' THEN wp.name
                 WHEN c.product_type = 'ssl' THEN sp.name
+                WHEN c.product_type = 'domain' THEN c.custom_domain
                 ELSE 'Produit inconnu'
             END as product_name,
             CASE 
                 WHEN c.product_type = 'hosting' THEN hp.price
                 WHEN c.product_type = 'wordpress' THEN wp.price
                 WHEN c.product_type = 'ssl' THEN sp.price
+                WHEN c.product_type = 'domain' THEN 9000
                 ELSE 0
             END as price
             FROM cart c
@@ -114,9 +116,15 @@ function getUserCartItems($user_id) {
         if (
             ($row['product_type'] === 'ssl' && empty($row['product_name'])) ||
             ($row['product_type'] === 'wordpress' && empty($row['product_name'])) ||
-            ($row['product_type'] === 'hosting' && empty($row['product_name']))
+            ($row['product_type'] === 'hosting' && empty($row['product_name'])) ||
+            ($row['product_type'] === 'domain' && empty($row['product_name']))
         ) {
-            $row['product_name'] = 'Produit inconnu (id: ' . $row['product_id'] . ')';
+            if ($row['product_type'] === 'domain' && !empty($row['custom_domain'])) {
+                $row['product_name'] = $row['custom_domain'];
+                $row['price'] = 9000; // Prix fixe pour les domaines
+            } else {
+                $row['product_name'] = 'Produit inconnu (id: ' . $row['product_id'] . ')';
+            }
         }
         
         $cartItems[] = $row;
@@ -264,6 +272,29 @@ function getSSLPackages() {
 }
 
 /**
+ * Fonction pour obtenir tous les packages de domaines
+ * @return array Packages de domaines
+ */
+function getDomainPackages() {
+    global $conn;
+    
+    $sql = "SELECT * FROM domain_packages ORDER BY price ASC";
+    
+    $result = $conn->query($sql);
+    
+    if (!$result) {
+        return [];
+    }
+    
+    $packages = [];
+    while ($row = $result->fetch_assoc()) {
+        $packages[] = $row;
+    }
+    
+    return $packages;
+}
+
+/**
  * Fonction pour ajouter un élément au panier
  * @param int $user_id ID de l'utilisateur
  * @param string $product_type Type de produit (hosting, wordpress, ssl)
@@ -374,6 +405,8 @@ function getProductName($product_type, $product_id) {
         case 'ssl':
             $sql = "SELECT name FROM ssl_packages WHERE id = ?";
             break;
+        case 'domain':
+            return 'Domaine: ' . $product_id;
         default:
             return 'Produit inconnu';
     }
@@ -503,6 +536,28 @@ function getSSLPackageById($package_id) {
     global $conn;
     
     $sql = "SELECT * FROM ssl_packages WHERE id = ?";
+    
+    $stmt = $conn->prepare($sql);
+    $stmt->bind_param("i", $package_id);
+    $stmt->execute();
+    $result = $stmt->get_result();
+    
+    if ($result->num_rows == 0) {
+        return false;
+    }
+    
+    return $result->fetch_assoc();
+}
+
+/**
+ * Fonction pour obtenir un package de domaine par son ID
+ * @param int $package_id ID du package
+ * @return array|bool Informations du package ou false si non trouvé
+ */
+function getDomainPackageById($package_id) {
+    global $conn;
+    
+    $sql = "SELECT * FROM domain_packages WHERE id = ?";
     
     $stmt = $conn->prepare($sql);
     $stmt->bind_param("i", $package_id);
@@ -760,7 +815,7 @@ function generateDefaultConnectionInfo($service_type, $user_id) {
                 'directadmin_url' => 'https://panel.kmerhosting.site',
                 'directadmin_username' => $username . rand(100, 999),
                 'directadmin_password' => 'Motdepasse@' . rand(1000, 9999),
-                'status' => 'Configuration en cours'
+                'server_ip' => 'hidden'
             ]);
         case 'ssl':
             return null; // Les certificats SSL n'ont généralement pas d'informations de connexion
@@ -812,6 +867,9 @@ function createServicesFromOrder($order_id) {
                 $duration = 30; // 1 mois
                 break;
             case 'ssl':
+                $duration = 365; // 1 an
+                break;
+            case 'domain':
                 $duration = 365; // 1 an
                 break;
         }
@@ -893,6 +951,7 @@ function getOrderDetails($order_id) {
                 WHEN oi.product_type = 'hosting' THEN hp.name
                 WHEN oi.product_type = 'wordpress' THEN wp.name
                 WHEN oi.product_type = 'ssl' THEN sp.name
+                WHEN oi.product_type = 'domain' THEN oi.product_id
                 ELSE 'Produit inconnu'
             END as product_name
             FROM order_items oi
@@ -908,6 +967,10 @@ function getOrderDetails($order_id) {
     
     $items = [];
     while ($row = $result->fetch_assoc()) {
+        // Pour les domaines, afficher le nom du domaine comme nom de produit
+        if ($row['product_type'] === 'domain') {
+            $row['product_name'] = 'Domaine: ' . $row['product_id'];
+        }
         $items[] = $row;
     }
     

@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Hôte : 127.0.0.1:3306
--- Généré le : ven. 09 mai 2025 à 08:34
+-- Généré le : ven. 09 mai 2025 à 12:41
 -- Version du serveur : 5.7.40
 -- Version de PHP : 8.2.0
 
@@ -55,7 +55,7 @@ CREATE TABLE IF NOT EXISTS `credit` (
   `last_updated` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
   PRIMARY KEY (`id`),
   UNIQUE KEY `user_id` (`user_id`)
-) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 --
 -- Déchargement des données de la table `credit`
@@ -281,7 +281,20 @@ CREATE TABLE IF NOT EXISTS `password_resets` (
   PRIMARY KEY (`id`),
   UNIQUE KEY `token` (`token`),
   KEY `user_id` (`user_id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+) ENGINE=InnoDB AUTO_INCREMENT=8 DEFAULT CHARSET=utf8mb4;
+
+--
+-- Déchargement des données de la table `password_resets`
+--
+
+INSERT INTO `password_resets` (`id`, `user_id`, `token`, `expiry_date`, `used`, `created_at`) VALUES
+(1, 1, '60d7d995ff8e5f9545f174ee8dca9406', '2025-05-10 08:47:17', 1, '2025-05-09 09:47:17'),
+(2, 1, '07dd806f45221d458fb23782594091e8', '2025-05-10 08:52:45', 1, '2025-05-09 09:52:45'),
+(3, 1, 'ff0b3a60dac0ee7aac136884d52fc660', '2025-05-10 10:12:25', 1, '2025-05-09 11:12:25'),
+(4, 1, '0688cc75204eba89a31be5b48f7c5f24', '2025-05-10 10:28:12', 1, '2025-05-09 11:28:12'),
+(5, 1, '05f27cc091b9a32cb78e6d964d99e66c', '2025-05-10 10:31:48', 1, '2025-05-09 11:31:48'),
+(6, 1, 'a878c3b259e02e4d471a1aeb94ca69f5', '2025-05-10 10:51:51', 1, '2025-05-09 11:51:51'),
+(7, 1, 'd72c64d87c71ab547fe17c7209360b7a', '2025-05-10 10:59:56', 0, '2025-05-09 11:59:56');
 
 -- --------------------------------------------------------
 
@@ -429,17 +442,22 @@ CREATE TABLE IF NOT EXISTS `users` (
   `postal_code` varchar(20) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
   `website` varchar(191) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
   `credit` decimal(10,2) NOT NULL DEFAULT '0.00',
+  `verification_code` varchar(100) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `verification_expiry` datetime DEFAULT NULL,
+  `is_verified` tinyint(1) DEFAULT '0',
   PRIMARY KEY (`id`),
   UNIQUE KEY `username` (`username`),
   UNIQUE KEY `email` (`email`)
-) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=5 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 --
 -- Déchargement des données de la table `users`
 --
 
-INSERT INTO `users` (`id`, `fullname`, `username`, `email`, `tel`, `password`, `created_at`, `updated_at`, `profile_image`, `company`, `country`, `address`, `city`, `region`, `postal_code`, `website`, `credit`) VALUES
-(1, 'TENEKEU TOSCANI', 'TOSCANI', 'toscanisoft@gmail.com', '694193493', '$2y$10$rS0OaJs545lPa19TNWcGuu.IP1Ra2WT2J/OsM0MtzsATz25qSn6Um', '2025-05-07 17:34:04', '2025-05-08 21:22:44', NULL, 'Toscanisoft', 'Cameroun', 'NKOABAN', 'Yaounde', 'Centre', '5734', 'https://toscani-tenekeu.onrender.com', '0.00');
+INSERT INTO `users` (`id`, `fullname`, `username`, `email`, `tel`, `password`, `created_at`, `updated_at`, `profile_image`, `company`, `country`, `address`, `city`, `region`, `postal_code`, `website`, `credit`, `verification_code`, `verification_expiry`, `is_verified`) VALUES
+(1, 'TENEKEU TOSCANI', 'TOSCANI', 'toscanisoft@gmail.com', '694193493', '$2y$10$jEm29BFLEF33GkNHeK93n.csGhzYiZV1u3IBD/AYkXmk4x7PlRxeK', '2025-05-07 17:34:04', '2025-05-09 10:34:08', NULL, 'Toscanisoft', 'Cameroun', 'NKOABAN', 'Yaounde', 'Centre', '5734', 'https://toscani-tenekeu.onrender.com', '0.00', NULL, NULL, 0),
+(3, 'nc', 'nu', 'mariendabou123@gmail.com', '694193493', '$2y$10$7UQI4vx6mA0LxK9R1FVTGuCbG5ryIKWKGKfHcywmhLe3bTPpf9zhi', '2025-05-09 12:02:27', '2025-05-09 12:02:27', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, '0.00', '266493090c785167bf8073ae4c864c55', '2025-05-10 12:02:27', 0),
+(4, 'ncc', 'nuu', 'em@gmail.com', '694193493', '$2y$10$PLwoNR.xcXz8A9vX9fvdP.sJbrvH2Oxu8QKyNNns8txd46OrtnGIy', '2025-05-09 12:05:48', '2025-05-09 12:05:48', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, '0.00', NULL, NULL, 0);
 
 -- --------------------------------------------------------
 

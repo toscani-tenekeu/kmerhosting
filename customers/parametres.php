@@ -348,6 +348,32 @@ if (isset($_GET['success']) && $_GET['success'] == 1) {
                         </div>
                     </div>
 
+                    <!-- Delete Account Section -->
+                    <div class="bg-dark-800 rounded-lg border border-red-900 p-6 mb-6">
+                        <h2 class="text-lg font-semibold text-red-500 mb-6">Supprimer mon compte</h2>
+                        <div class="space-y-6">
+                            <div>
+                                <p class="text-gray-300 mb-3">Cette action est irréversible et entraînera les conséquences suivantes :</p>
+                                <ul class="list-disc pl-5 text-gray-400 space-y-2 mb-4">
+                                    <li>Toutes vos données personnelles seront définitivement supprimées</li>
+                                    <li>Vos services actifs seront immédiatement résiliés</li>
+                                    <li>Vous perdrez l'accès à tous vos domaines, hébergements et certificats SSL</li>
+                                    <li>Votre crédit restant sera perdu</li>
+                                    <li>Vous ne pourrez plus vous connecter avec ce compte</li>
+                                </ul>
+                                <div class="bg-red-900/20 p-4 rounded-lg mb-4">
+                                    <p class="text-red-400 text-sm">Pour confirmer la suppression, veuillez saisir "Delete my account now" dans le champ ci-dessous.</p>
+                                </div>
+                                <div class="mb-4">
+                                    <input type="text" id="delete-confirmation" placeholder="Delete my account now" class="w-full bg-dark-900 border border-dark-700 rounded px-3 py-2 text-white">
+                                </div>
+                                <button type="button" id="delete-account-btn" class="bg-red-600 hover:bg-red-700 text-white font-medium py-2 px-4 rounded-lg transition duration-300 opacity-50 cursor-not-allowed">
+                                    <i class="fas fa-trash-alt mr-2"></i> Supprimer définitivement mon compte
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+
                     <!-- Submit Button -->
                     <div class="flex justify-end">
                         <button type="submit" class="px-6 py-3 bg-kmergreen hover:bg-kmergreen-dark text-white font-medium rounded-lg transition duration-300">
@@ -498,6 +524,98 @@ if (isset($_GET['success']) && $_GET['success'] == 1) {
                 const event = new Event('change');
                 checkbox.dispatchEvent(event);
             });
+
+            // Delete account functionality
+            const deleteConfirmationInput = document.getElementById('delete-confirmation');
+            const deleteAccountBtn = document.getElementById('delete-account-btn');
+            
+            if (deleteConfirmationInput && deleteAccountBtn) {
+                deleteConfirmationInput.addEventListener('input', function() {
+                    if (this.value === 'Delete my account now') {
+                        deleteAccountBtn.classList.remove('opacity-50', 'cursor-not-allowed');
+                    } else {
+                        deleteAccountBtn.classList.add('opacity-50', 'cursor-not-allowed');
+                    }
+                });
+                
+                deleteAccountBtn.addEventListener('click', function() {
+                    if (deleteConfirmationInput.value !== 'Delete my account now') {
+                        Swal.fire({
+                            icon: 'error',
+                            title: 'Confirmation incorrecte',
+                            text: 'Veuillez saisir exactement "Delete my account now" pour confirmer la suppression.'
+                        });
+                        return;
+                    }
+                    
+                    Swal.fire({
+                        title: 'Êtes-vous absolument sûr ?',
+                        html: `
+                            <div class="text-left">
+                                <p class="mb-3">Cette action est <strong class="text-red-500">irréversible</strong> et entraînera :</p>
+                                <ul class="list-disc pl-5 text-left mb-3">
+                                    <li>La suppression définitive de toutes vos données</li>
+                                    <li>La résiliation immédiate de tous vos services</li>
+                                    <li>La perte de tous vos domaines et hébergements</li>
+                                </ul>
+                                <p>Vous ne pourrez plus accéder à votre compte après cette action.</p>
+                            </div>
+                        `,
+                        icon: 'warning',
+                        showCancelButton: true,
+                        confirmButtonColor: '#d33',
+                        cancelButtonColor: '#3085d6',
+                        confirmButtonText: 'Oui, supprimer mon compte',
+                        cancelButtonText: 'Annuler',
+                        reverseButtons: true
+                    }).then((result) => {
+                        if (result.isConfirmed) {
+                            // Show loading state
+                            Swal.fire({
+                                title: 'Suppression en cours...',
+                                html: 'Veuillez patienter pendant que nous supprimons votre compte.',
+                                allowOutsideClick: false,
+                                didOpen: () => {
+                                    Swal.showLoading();
+                                }
+                            });
+                            
+                            // Send delete request
+                            fetch('../backend/profile/delete_account.php', {
+                                method: 'POST'
+                            })
+                            .then(response => response.json())
+                            .then(data => {
+                                if (data.success) {
+                                    Swal.fire({
+                                        icon: 'success',
+                                        title: 'Compte supprimé',
+                                        text: 'Votre compte a été supprimé avec succès. Vous allez être redirigé vers la page d\'accueil.',
+                                        showConfirmButton: false,
+                                        timer: 3000
+                                    }).then(() => {
+                                        window.location.href = '../index.php';
+                                    });
+                                } else {
+                                    Swal.fire({
+                                        icon: 'error',
+                                        title: 'Erreur',
+                                        text: data.message || 'Une erreur est survenue lors de la suppression de votre compte.'
+                                    });
+                                }
+                            })
+                            .catch(error => {
+                                console.error('Erreur:', error);
+                                Swal.fire({
+                                    icon: 'error',
+                                    title: 'Erreur',
+                                    text: 'Une erreur est survenue lors de la suppression de votre compte.'
+                                });
+                            });
+                        }
+                    });
+                });
+            }
         });
     </script>
     <style>
