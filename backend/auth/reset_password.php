@@ -46,7 +46,7 @@ try {
             $mail->Host = 'mail.kmerhosting.site';
             $mail->SMTPAuth = true;
             $mail->Username = 'noreply@kmerhosting.site';
-            $mail->Password = 'YOUR_EMAIL_PASSWORD'; // Replace with actual password
+            $mail->Password = 'password4321go'; // Replace with actual password
             $mail->SMTPSecure = PHPMailer\PHPMailer\PHPMailer::ENCRYPTION_STARTTLS;
             $mail->Port = 587;
 
@@ -55,7 +55,7 @@ try {
             $mail->addAddress($email);
 
             // For local development
-            $resetLink = "http://127.0.0.1:5000/reset-password.php?token=" . $token;
+            $resetLink = "http://127.0.0.1/kmerhosting/reset-password.php?token=" . $token;
             
             // Email content
             $mail->isHTML(true);
@@ -71,7 +71,7 @@ try {
         <body style='font-family: Arial, sans-serif; line-height: 1.6; color: #333; background-color: #f3f4f6;'>
             <div style='max-width: 600px; margin: 20px auto; padding: 30px; background-color: white; border-radius: 15px; box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);'>
                 <div style='text-align: center; margin-bottom: 30px;'>
-                    <img src='https://kmerhosting.site/assets/images/logo.png' alt='KmerHosting Logo' style='max-width: 200px; height: auto;'>
+                    <img src='http://127.0.0.1/kmerhosting/assets/images/logo.png' alt='KmerHosting Logo' style='max-width: 200px; height: auto;'>
                 </div>
                 <h2 style='color: #004a6e; text-align: center;'>Réinitialisation de votre mot de passe</h2>
                 <p>Bonjour,</p>
