@@ -939,7 +939,7 @@ function createServicesFromOrder($order_id) {
         } else {
             // Pour les autres types de services, utiliser la requête existante
             $sql = "INSERT INTO user_services (user_id, service_type, service_id, domain_name, start_date, expiry_date, price, billing_cycle, status, auto_renew, connection_info, created_at) 
-            VALUES (?, ?, ?, NULL, NOW(), ?, ?, 'quarterly', 'pending', 1, ?, NOW())";
+            VALUES (?, ?, ?, NULL, NOW(), ?, ?, 'annual', 'pending', 1, ?, NOW())";
 
             try {
                 $stmt = $conn->prepare($sql);
