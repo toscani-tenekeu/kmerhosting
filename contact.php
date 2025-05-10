@@ -353,7 +353,7 @@
                     <ul class="space-y-2">
                         <li class="flex items-start">
                             <i class="fas fa-map-marker-alt mt-1 mr-3 text-kmergreen"></i>
-                            <span class="text-gray-300">Douala, Cameroun</span>
+                            <span class="text-gray-300">Yaoundé, Cameroun</span>
                         </li>
                         <li class="flex items-start">
                             <i class="fas fa-envelope mt-1 mr-3 text-kmergreen"></i>
