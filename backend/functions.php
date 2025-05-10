@@ -833,7 +833,7 @@ function generateDefaultConnectionInfo($service_type, $user_id) {
 }
 
 /**
- * Fonction pour créer les services à partir d'une commande
+ * Fonction pour créer les services à partir d'une commande - Version corrigée
  * @param int $order_id ID de la commande
  * @return bool True si la création a réussi, false sinon
  */
@@ -865,14 +865,14 @@ function createServicesFromOrder($order_id) {
     
     while ($item = $result->fetch_assoc()) {
         // Déterminer la durée du service en fonction du type de produit
-        $duration = 365; // Par défaut 30 jours (1 mois)
+        $duration = 365; // Par défaut 365 jours (1 an)
         
         switch ($item['product_type']) {
             case 'hosting':
-                $duration = 365; // 1 mois
+                $duration = 365; // 1 an
                 break;
             case 'wordpress':
-                $duration = 365; // 1 mois
+                $duration = 365; // 1 an
                 break;
             case 'ssl':
                 $duration = 365; // 1 an
@@ -901,12 +901,18 @@ function createServicesFromOrder($order_id) {
             
             // Si c'est un ID numérique, essayer de récupérer le nom de domaine depuis le panier
             if (is_numeric($domain_name)) {
-                $stmt = $conn->prepare("SELECT custom_domain FROM cart WHERE user_id = ? ORDER BY id DESC LIMIT 1");
-                $stmt->execute([$user_id]);
-                $domain_result = $stmt->fetch(PDO::FETCH_ASSOC);
+                // Correction ici: utilisation de mysqli au lieu de PDO
+                $domain_query = "SELECT custom_domain FROM cart WHERE user_id = ? ORDER BY id DESC LIMIT 1";
+                $domain_stmt = $conn->prepare($domain_query);
+                $domain_stmt->bind_param("i", $user_id);
+                $domain_stmt->execute();
+                $domain_result = $domain_stmt->get_result();
                 
-                if ($domain_result && !empty($domain_result['custom_domain'])) {
-                    $domain_name = $domain_result['custom_domain'];
+                if ($domain_result && $domain_result->num_rows > 0) {
+                    $domain_row = $domain_result->fetch_assoc();
+                    if (!empty($domain_row['custom_domain'])) {
+                        $domain_name = $domain_row['custom_domain'];
+                    }
                 }
             }
             
