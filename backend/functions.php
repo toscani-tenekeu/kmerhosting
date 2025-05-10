@@ -820,9 +820,9 @@ function generateDefaultConnectionInfo($service_type, $user_id) {
         case 'hosting':
         case 'wordpress':
             return json_encode([
-                'directadmin_url' => 'https://www.panel.kmerhosting.site',
-                'directadmin_username' => $username . rand(100, 999),
-               'directadmin_password' => $username . rand(1000, 9999) . rand(1000, 9999) . date('His'),
+                'directadmin_url' => 'http://panel.kmerhosting.site',
+                'directadmin_username' => $username . date('His'),
+               'directadmin_password' => $username . rand(1000, 9999) . date('His'),
                 'server_ip' => 'hidden'
             ]);
         case 'ssl':
