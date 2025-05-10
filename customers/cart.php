@@ -483,7 +483,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['checkout'])) {
                     <div class="mt-4 bg-yellow-900/30 border border-yellow-700/50 rounded-lg p-3">
                             <div class="flex items-center">
                                 <i class="fas fa-exclamation-triangle text-yellow-500 mr-2"></i>
-                                <span class="text-yellow-400 text-sm">Ne quittez pas cette page et n'effectuez aucune autre action pendant le processus de paiement. Celui-ci peut prendre entre 15 et 45 secondes. Toute interruption pourrait entraîner des problèmes avec votre commande.</span>
+                                <span class="text-yellow-400 text-sm">Ne quittez pas cette page et n'effectuez aucune autre action pendant le processus de paiement. Celui-ci peut prendre entre 20 et 45 secondes. Toute interruption pourrait entraîner des problèmes avec votre commande.</span>
                             </div>
                         </div>  
                     
@@ -943,13 +943,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['checkout'])) {
 
             // Valider le code de confirmation
             if (paymentConfirmationForm) {
-                confirmCheckoutBtn.addEventListener('click', ()=> {
-                    confirmCheckoutBtn.disabled = true;
-                    confirmCheckoutBtn.classList.add("opacity-50", "cursor-not-allowed");
-                    confirmCheckoutBtn.textContent = "Traitement en cours...";
-                });
                 
+             
                 paymentConfirmationForm.addEventListener('submit', function(e) {
+                    
                     if (confirmationCode.value !== 'kmerhosting') {
                         e.preventDefault();
                         confirmationError.classList.remove('hidden');
@@ -959,7 +956,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['checkout'])) {
                     
                     // Si le code est correct, soumettre le formulaire
                     confirmationError.classList.add('hidden');
-                   
+                    confirmCheckoutBtn.addEventListener('click', ()=> {
+                        confirmCheckoutBtn.disabled = true;
+                        confirmCheckoutBtn.classList.add("opacity-50", "cursor-not-allowed");
+                        confirmCheckoutBtn.textContent = "Traitement en cours...";
+                    });
                     return true;
                     
                 });
