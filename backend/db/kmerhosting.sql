@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Hôte : 127.0.0.1:3306
--- Généré le : sam. 10 mai 2025 à 08:28
+-- Généré le : sam. 10 mai 2025 à 10:45
 -- Version du serveur : 5.7.40
 -- Version de PHP : 8.2.0
 
@@ -39,7 +39,7 @@ CREATE TABLE IF NOT EXISTS `cart` (
   `updated_at` datetime DEFAULT NULL,
   PRIMARY KEY (`id`),
   KEY `user_id` (`user_id`)
-) ENGINE=InnoDB AUTO_INCREMENT=30 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=38 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 -- --------------------------------------------------------
 
@@ -59,7 +59,7 @@ CREATE TABLE IF NOT EXISTS `cart_history` (
   `updated_at` datetime DEFAULT NULL,
   PRIMARY KEY (`id`),
   KEY `user_id` (`user_id`)
-) ENGINE=InnoDB AUTO_INCREMENT=30 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=38 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 --
 -- Déchargement des données de la table `cart_history`
@@ -71,7 +71,15 @@ INSERT INTO `cart_history` (`id`, `user_id`, `product_type`, `product_id`, `quan
 (26, 1, 'ssl', '3', 1, NULL, '2025-05-10 08:33:23', NULL),
 (27, 1, 'hosting', '3', 1, NULL, '2025-05-10 08:33:27', NULL),
 (28, 1, 'wordpress', '1', 1, NULL, '2025-05-10 09:26:10', NULL),
-(29, 1, 'ssl', '3', 1, NULL, '2025-05-10 09:26:15', NULL);
+(29, 1, 'ssl', '3', 1, NULL, '2025-05-10 09:26:15', NULL),
+(30, 1, 'hosting', '3', 1, NULL, '2025-05-10 09:33:51', NULL),
+(31, 1, 'wordpress', '1', 1, NULL, '2025-05-10 09:36:24', NULL),
+(32, 1, 'hosting', '7', 1, NULL, '2025-05-10 11:06:20', NULL),
+(33, 1, 'wordpress', '2', 1, NULL, '2025-05-10 11:26:09', NULL),
+(34, 1, 'hosting', '4', 1, NULL, '2025-05-10 11:26:21', NULL),
+(35, 1, 'ssl', '2', 1, NULL, '2025-05-10 11:27:19', NULL),
+(36, 1, 'domain', '1', 1, 'toscani.computer', '2025-05-10 11:27:34', NULL),
+(37, 1, 'domain', '1', 1, 'toscani.technology', '2025-05-10 11:32:53', NULL);
 
 -- --------------------------------------------------------
 
@@ -94,7 +102,7 @@ CREATE TABLE IF NOT EXISTS `credit` (
 --
 
 INSERT INTO `credit` (`id`, `user_id`, `amount`, `last_updated`) VALUES
-(1, 1, '585500.00', '2025-05-10 08:26:26');
+(1, 1, '411500.00', '2025-05-10 10:40:22');
 
 -- --------------------------------------------------------
 
@@ -273,7 +281,7 @@ CREATE TABLE IF NOT EXISTS `orders` (
   `updated_at` datetime DEFAULT NULL,
   PRIMARY KEY (`id`),
   KEY `user_id` (`user_id`)
-) ENGINE=InnoDB AUTO_INCREMENT=27 DEFAULT CHARSET=utf8mb4;
+) ENGINE=InnoDB AUTO_INCREMENT=37 DEFAULT CHARSET=utf8mb4;
 
 --
 -- Déchargement des données de la table `orders`
@@ -305,7 +313,17 @@ INSERT INTO `orders` (`id`, `user_id`, `total_amount`, `payment_method`, `status
 (23, 1, '18000.00', 'credit', 'completed', '2025-05-10 08:31:09', NULL),
 (24, 1, '18000.00', 'credit', 'completed', '2025-05-10 08:32:21', NULL),
 (25, 1, '45000.00', 'credit', 'completed', '2025-05-10 08:34:09', NULL),
-(26, 1, '25000.00', 'credit', 'completed', '2025-05-10 09:26:26', NULL);
+(26, 1, '25000.00', 'credit', 'completed', '2025-05-10 09:26:26', NULL),
+(27, 1, '10000.00', 'credit', 'completed', '2025-05-10 09:34:03', NULL),
+(28, 1, '15000.00', 'credit', 'completed', '2025-05-10 09:36:33', NULL),
+(29, 1, '60000.00', 'credit', 'completed', '2025-05-10 11:25:43', NULL),
+(30, 1, '16000.00', 'credit', 'completed', '2025-05-10 11:28:00', NULL),
+(31, 1, '16000.00', 'credit', 'completed', '2025-05-10 11:29:03', NULL),
+(32, 1, '16000.00', 'credit', 'completed', '2025-05-10 11:29:36', NULL),
+(33, 1, '16000.00', 'credit', 'completed', '2025-05-10 11:30:39', NULL),
+(34, 1, '7000.00', 'credit', 'completed', '2025-05-10 11:31:03', NULL),
+(35, 1, '9000.00', 'credit', 'completed', '2025-05-10 11:33:06', NULL),
+(36, 1, '9000.00', 'credit', 'completed', '2025-05-10 11:40:22', NULL);
 
 -- --------------------------------------------------------
 
@@ -323,7 +341,7 @@ CREATE TABLE IF NOT EXISTS `order_items` (
   `price` decimal(10,2) NOT NULL,
   PRIMARY KEY (`id`),
   KEY `order_id` (`order_id`)
-) ENGINE=InnoDB AUTO_INCREMENT=49 DEFAULT CHARSET=utf8mb4;
+) ENGINE=InnoDB AUTO_INCREMENT=63 DEFAULT CHARSET=utf8mb4;
 
 --
 -- Déchargement des données de la table `order_items`
@@ -377,7 +395,21 @@ INSERT INTO `order_items` (`id`, `order_id`, `product_type`, `product_id`, `quan
 (45, 25, 'ssl', '3', 1, '10000.00'),
 (46, 25, 'hosting', '3', 1, '10000.00'),
 (47, 26, 'wordpress', '1', 1, '15000.00'),
-(48, 26, 'ssl', '3', 1, '10000.00');
+(48, 26, 'ssl', '3', 1, '10000.00'),
+(49, 27, 'hosting', '3', 1, '10000.00'),
+(50, 28, 'wordpress', '1', 1, '15000.00'),
+(51, 29, 'hosting', '7', 1, '60000.00'),
+(52, 30, 'ssl', '2', 1, '7000.00'),
+(53, 30, 'domain', '1', 1, '9000.00'),
+(54, 31, 'ssl', '2', 1, '7000.00'),
+(55, 31, 'domain', '1', 1, '9000.00'),
+(56, 32, 'ssl', '2', 1, '7000.00'),
+(57, 32, 'domain', '1', 1, '9000.00'),
+(58, 33, 'ssl', '2', 1, '7000.00'),
+(59, 33, 'domain', '1', 1, '9000.00'),
+(60, 34, 'ssl', '2', 1, '7000.00'),
+(61, 35, 'domain', '1', 1, '9000.00'),
+(62, 36, 'domain', '1', 1, '9000.00');
 
 -- --------------------------------------------------------
 
@@ -515,7 +547,7 @@ CREATE TABLE IF NOT EXISTS `transactions` (
   `created_at` datetime NOT NULL,
   PRIMARY KEY (`id`),
   KEY `user_id` (`user_id`)
-) ENGINE=InnoDB AUTO_INCREMENT=27 DEFAULT CHARSET=utf8mb4;
+) ENGINE=InnoDB AUTO_INCREMENT=37 DEFAULT CHARSET=utf8mb4;
 
 --
 -- Déchargement des données de la table `transactions`
@@ -547,7 +579,17 @@ INSERT INTO `transactions` (`id`, `user_id`, `amount`, `type`, `description`, `c
 (23, 1, '18000.00', 'debit', 'Paiement de la commande #23', '2025-05-10 08:31:09'),
 (24, 1, '18000.00', 'debit', 'Paiement de la commande #24', '2025-05-10 08:32:21'),
 (25, 1, '45000.00', 'debit', 'Paiement de la commande #25', '2025-05-10 08:34:09'),
-(26, 1, '25000.00', 'debit', 'Paiement de la commande #26', '2025-05-10 09:26:26');
+(26, 1, '25000.00', 'debit', 'Paiement de la commande #26', '2025-05-10 09:26:26'),
+(27, 1, '10000.00', 'debit', 'Paiement de la commande #27', '2025-05-10 09:34:03'),
+(28, 1, '15000.00', 'debit', 'Paiement de la commande #28', '2025-05-10 09:36:33'),
+(29, 1, '60000.00', 'debit', 'Paiement de la commande #29', '2025-05-10 11:25:43'),
+(30, 1, '16000.00', 'debit', 'Paiement de la commande #30', '2025-05-10 11:28:00'),
+(31, 1, '16000.00', 'debit', 'Paiement de la commande #31', '2025-05-10 11:29:03'),
+(32, 1, '16000.00', 'debit', 'Paiement de la commande #32', '2025-05-10 11:29:36'),
+(33, 1, '16000.00', 'debit', 'Paiement de la commande #33', '2025-05-10 11:30:39'),
+(34, 1, '7000.00', 'debit', 'Paiement de la commande #34', '2025-05-10 11:31:03'),
+(35, 1, '9000.00', 'debit', 'Paiement de la commande #35', '2025-05-10 11:33:06'),
+(36, 1, '9000.00', 'debit', 'Paiement de la commande #36', '2025-05-10 11:40:22');
 
 -- --------------------------------------------------------
 
@@ -613,15 +655,14 @@ CREATE TABLE IF NOT EXISTS `user_services` (
   `updated_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
   PRIMARY KEY (`id`),
   KEY `user_id` (`user_id`)
-) ENGINE=InnoDB AUTO_INCREMENT=30 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=37 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 --
 -- Déchargement des données de la table `user_services`
 --
 
 INSERT INTO `user_services` (`id`, `user_id`, `service_type`, `service_id`, `domain_name`, `start_date`, `expiry_date`, `price`, `billing_cycle`, `status`, `auto_renew`, `connection_info`, `created_at`, `updated_at`) VALUES
-(28, 1, 'wordpress', 1, NULL, '2025-05-10', '2026-05-10', '15000.00', 'quarterly', 'pending', 1, '{\"directadmin_url\":\"https:\\/\\/www.panel.kmerhosting.site\",\"directadmin_username\":\"TOSCANI124\",\"directadmin_password\":\"TOSCANI53441541082626\",\"server_ip\":\"hidden\"}', '2025-05-10 08:26:26', '2025-05-10 08:26:26'),
-(29, 1, 'ssl', 3, NULL, '2025-05-10', '2026-05-10', '10000.00', 'quarterly', 'pending', 1, NULL, '2025-05-10 08:26:26', '2025-05-10 08:26:26');
+(36, 1, 'domain', 1, 'toscani.technology', '2025-05-10', '2026-05-10', '9000.00', 'annual', 'pending', 1, NULL, '2025-05-10 10:40:22', '2025-05-10 10:40:22');
 
 -- --------------------------------------------------------
 
