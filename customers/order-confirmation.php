@@ -46,6 +46,174 @@ $userCredit = getUserCredit($user_id);
 // Récupérer les articles du panier et calculer le total
 $cartCount = getCartItemCount($user_id);
 
+// Vérifier si la facture a déjà été générée
+$invoice_filename = '../invoices/invoice_' . $order_id . '.pdf';
+// Utiliser un chemin absolu au lieu d'un chemin relatif
+$invoice_filename = dirname(__DIR__) . '/invoices/invoice_' . $order_id . '.pdf';
+$invoice_generated = false;
+$invoice_sent = false;
+
+// Si la facture n'existe pas encore, la générer
+if (!file_exists($invoice_filename)) {
+    // Générer la facture PDF avec TCPDF
+    require_once '../vendor/autoload.php';
+
+    // Créer un nouveau document PDF
+    $pdf = new TCPDF(PDF_PAGE_ORIENTATION, PDF_UNIT, PDF_PAGE_FORMAT, true, 'UTF-8', false);
+
+    // Définir les informations du document
+    $pdf->SetCreator('KmerHosting');
+    $pdf->SetAuthor('KmerHosting');
+    $pdf->SetTitle('Facture #' . $order_id);
+    $pdf->SetSubject('Facture KmerHosting');
+    $pdf->SetKeywords('Facture, KmerHosting, Commande');
+
+    // Supprimer les en-têtes et pieds de page par défaut
+    $pdf->setPrintHeader(false);
+    $pdf->setPrintFooter(false);
+
+    // Définir les marges
+    $pdf->SetMargins(15, 15, 15);
+
+    // Ajouter une page
+    $pdf->AddPage();
+
+    // Logo
+    $pdf->Image('../assets/images/logo.png', 15, 15, 50, 0, 'PNG', '', 'T', false, 300, '', false, false, 0, false, false, false);
+
+    // Titre
+    $pdf->SetFont('helvetica', 'B', 20);
+    $pdf->Cell(0, 20, '', 0, 1, 'R');
+    $pdf->Cell(0, 10, 'FACTURE', 0, 1, 'R');
+    $pdf->SetFont('helvetica', '', 12);
+    $pdf->Cell(0, 10, 'N° ' . $order_id . ' - ' . date('d/m/Y', strtotime($order['created_at'])), 0, 1, 'R');
+    $pdf->Ln(10);
+
+    // Informations client et entreprise
+    $pdf->SetFont('helvetica', 'B', 12);
+    $pdf->Cell(90, 10, 'FACTURÉ À:', 0, 0);
+    $pdf->Cell(90, 10, 'ÉMIS PAR:', 0, 1);
+    
+    $pdf->SetFont('helvetica', '', 10);
+    $pdf->Cell(90, 6, $order['fullname'], 0, 0);
+    $pdf->Cell(90, 6, 'KmerHosting', 0, 1);
+    $pdf->Cell(90, 6, $order['email'], 0, 0);
+    $pdf->Cell(90, 6, 'Douala, Cameroun', 0, 1);
+    $pdf->Cell(90, 6, '', 0, 0);
+    $pdf->Cell(90, 6, 'Email: contact@kmerhosting.site', 0, 1);
+    $pdf->Cell(90, 6, '', 0, 0);
+    $pdf->Cell(90, 6, 'Web: www.kmerhosting.site', 0, 1);
+    $pdf->Ln(10);
+
+    // Tableau des articles
+    $pdf->SetFont('helvetica', 'B', 10);
+    $pdf->SetFillColor(240, 240, 240);
+    $pdf->Cell(80, 8, 'PRODUIT', 1, 0, 'C', true);
+    $pdf->Cell(30, 8, 'PRIX', 1, 0, 'C', true);
+    $pdf->Cell(30, 8, 'QUANTITÉ', 1, 0, 'C', true);
+    $pdf->Cell(40, 8, 'TOTAL', 1, 1, 'C', true);
+
+    $pdf->SetFont('helvetica', '', 10);
+    foreach ($order['items'] as $item) {
+        $itemTotal = $item['price'] * $item['quantity'];
+        $pdf->Cell(80, 8, $item['product_name'], 1, 0, 'L');
+        $pdf->Cell(30, 8, number_format($item['price'], 0, ',', ' ') . ' FCFA', 1, 0, 'R');
+        $pdf->Cell(30, 8, $item['quantity'], 1, 0, 'C');
+        $pdf->Cell(40, 8, number_format($itemTotal, 0, ',', ' ') . ' FCFA', 1, 1, 'R');
+    }
+
+    // Total
+    $pdf->SetFont('helvetica', 'B', 10);
+    $pdf->Cell(140, 8, 'TOTAL', 1, 0, 'R');
+    $pdf->Cell(40, 8, number_format($order['total_amount'], 0, ',', ' ') . ' FCFA', 1, 1, 'R');
+    $pdf->Ln(10);
+
+    // Informations de paiement
+    $pdf->SetFont('helvetica', 'B', 11);
+    $pdf->Cell(0, 8, 'INFORMATIONS DE PAIEMENT', 0, 1);
+    $pdf->SetFont('helvetica', '', 10);
+    $pdf->Cell(40, 8, 'Méthode de paiement:', 0, 0);
+    $pdf->Cell(0, 8, ucfirst($order['payment_method']), 0, 1);
+    $pdf->Cell(40, 8, 'Statut:', 0, 0);
+    $pdf->Cell(0, 8, ucfirst($order['status']), 0, 1);
+    $pdf->Cell(40, 8, 'Date:', 0, 0);
+    $pdf->Cell(0, 8, date('d/m/Y H:i', strtotime($order['created_at'])), 0, 1);
+    $pdf->Ln(10);
+
+    // Note de remerciement
+    $pdf->SetFont('helvetica', 'I', 10);
+    $pdf->Cell(0, 8, 'Merci pour votre confiance. Pour toute question concernant cette facture, veuillez nous contacter.', 0, 1, 'C');
+    $pdf->Cell(0, 8, 'KmerHosting - Votre partenaire d\'hébergement web au Cameroun', 0, 1, 'C');
+
+    // Générer le PDF et l'enregistrer
+    $pdf->Output($invoice_filename, 'F');
+    // S'assurer que le dossier invoices existe
+    $invoices_dir = dirname(__DIR__) . '/invoices';
+    if (!is_dir($invoices_dir)) {
+        mkdir($invoices_dir, 0755, true);
+    }
+    $pdf->Output($invoice_filename, 'F');
+    $invoice_generated = true;
+
+    // Envoyer la facture par email
+    require_once '../vendor/autoload.php';
+    
+    // Créer une nouvelle instance de PHPMailer
+    $mail = new PHPMailer\PHPMailer\PHPMailer(true);
+    
+    try {
+        // Configuration du serveur
+        $mail->isSMTP();
+        $mail->Host       = 'mail.kmerhosting.site'; // Remplacez par votre serveur SMTP
+        $mail->SMTPAuth   = true;
+        $mail->Username   = 'noreply@kmerhosting.site'; // Remplacez par votre adresse email
+        $mail->Password   = 'password4321go'; // Remplacez par votre mot de passe
+        $mail->SMTPSecure = PHPMailer\PHPMailer\PHPMailer::ENCRYPTION_STARTTLS;
+        $mail->Port       = 587;
+        
+        // Destinataires
+        $mail->setFrom('noreply@kmerhosting.site', 'KmerHosting');
+        $mail->addAddress($order['email'], $order['fullname']);
+        
+        // Pièce jointe
+        $mail->addAttachment($invoice_filename, 'facture_' . $order_id . '.pdf');
+        
+        // Contenu
+        $mail->isHTML(true);
+        $mail->Subject = 'Votre facture KmerHosting #' . $order_id;
+        $mail->Body    = '
+            <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
+                <div style="text-align: center; padding: 20px 0;">
+                    <img src="https://kmerhosting.site/assets/images/logo.png" alt="KmerHosting Logo" style="max-width: 200px;">
+                </div>
+                <div style="background-color: #f8f9fa; padding: 20px; border-radius: 5px;">
+                    <h2 style="color: #0e7490;">Merci pour votre commande!</h2>
+                    <p>Bonjour ' . htmlspecialchars($order['fullname']) . ',</p>
+                    <p>Nous vous remercions pour votre commande. Votre facture est jointe à cet email.</p>
+                    <p><strong>Numéro de commande:</strong> #' . $order_id . '</p>
+                    <p><strong>Date:</strong> ' . date('d/m/Y H:i', strtotime($order['created_at'])) . '</p>
+                    <p><strong>Total:</strong> ' . number_format($order['total_amount'], 0, ',', ' ') . ' FCFA</p>
+                    <p>Vous pouvez gérer vos services depuis votre <a href="https://kmerhosting.site/customers/dashboard.php" style="color: #0e7490;">tableau de bord</a>.</p>
+                </div>
+                <div style="text-align: center; padding: 20px 0; color: #6c757d; font-size: 12px;">
+                    <p>© ' . date('Y') . ' KmerHosting. Tous droits réservés.</p>
+                    <p>Cet email a été envoyé automatiquement, merci de ne pas y répondre.</p>
+                </div>
+            </div>
+        ';
+        
+        $mail->send();
+        $invoice_sent = true;
+    } catch (Exception $e) {
+        // Enregistrer l'erreur mais continuer l'exécution
+        error_log("Erreur d'envoi d'email: " . $mail->ErrorInfo);
+    }
+} else {
+    // La facture existe déjà
+    $invoice_generated = true;
+    $invoice_sent = true;
+}
+
 // Pour le menu actif
 $currentPage = 'dashboard';
 ?>
@@ -235,6 +403,17 @@ $currentPage = 'dashboard';
                     </div>
                     <p class="text-gray-300 mb-2">Votre commande #<?php echo $order_id; ?> a été traitée avec succès. Merci pour votre achat!</p>
                     <p class="text-gray-400">Date: <?php echo date('d/m/Y H:i', strtotime($order['created_at'])); ?></p>
+                    <?php if ($invoice_sent): ?>
+                    <p class="text-gray-300 mt-2"><i class="fas fa-envelope text-kmergreen mr-2"></i> Une facture a été envoyée à votre adresse email.</p>
+                    <?php endif; ?>
+                    <?php if ($invoice_generated): ?>
+                    <div class="mt-4">
+                        <a href="../invoices/invoice_<?php echo $order_id; ?>.pdf" target="_blank" class="inline-flex items-center px-4 py-2 bg-kmergreen hover:bg-kmergreen-dark text-white rounded-lg transition-colors duration-300">
+                            <a href="/kmerhosting/invoices/invoice_<?php echo $order_id; ?>.pdf" target="_blank" class="inline-flex items-center px-4 py-2 bg-kmergreen hover:bg-kmergreen-dark text-white rounded-lg transition-colors duration-300">
+                            <i class="fas fa-file-pdf mr-2"></i> Télécharger la facture
+                        </a>
+                    </div>
+                    <?php endif; ?>
                 </div>
 
                 <!-- Order Details -->

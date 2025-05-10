@@ -204,19 +204,14 @@ if (isset($_GET['redirect']) && !empty($_GET['redirect'])) {
             </div>
           </button>
           
-          <button type="button" class="recovery-option w-full flex items-center p-3 border border-gray-300 rounded-lg hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-kmergreen transition duration-200" data-method="whatsapp">
+          <button type="button" class="hidden recovery-option w-full flex items-center p-3 border border-gray-300 rounded-lg hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-kmergreen transition duration-200" data-method="whatsapp">
             <div class="w-10 h-10 rounded-full bg-green-100 flex items-center justify-center mr-3">
               <i class="fab fa-whatsapp text-green-500"></i>
             </div>
-            <div class="text-left">
-              <h4 class="font-medium text-gray-800">Par WhatsApp</h4>
-              <p class="text-sm text-gray-500">Recevoir un code de réinitialisation par WhatsApp</p>
-            </div>
           </button>
-          
-          
+
         </div>
-        
+
         <div id="recovery-code-input" class="hidden mt-4">
           <label for="reset-code" class="block text-gray-700 font-medium mb-2">Code de réinitialisation</label>
           <div class="relative">

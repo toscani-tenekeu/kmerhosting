@@ -473,12 +473,22 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['checkout'])) {
                         <div id="services-summary" class="space-y-2">
                             <!-- Les services seront ajoutés ici dynamiquement -->
                         </div>
+                        
                         <div class="border-t border-dark-600 mt-3 pt-3 flex justify-between">
                             <span class="font-medium text-white">Total:</span>
                             <span id="total-amount" class="font-bold text-kmergreen">0 FCFA</span>
                         </div>
                     </div>
+                    <!-- Message d'avertissement -->
+                    <div class="mt-4 bg-yellow-900/30 border border-yellow-700/50 rounded-lg p-3">
+                            <div class="flex items-center">
+                                <i class="fas fa-exclamation-triangle text-yellow-500 mr-2"></i>
+                                <span class="text-yellow-400 text-sm">Ne quittez pas cette page et n'effectuez aucune autre action pendant le processus de paiement. Celui-ci peut prendre entre 15 et 45 secondes. Toute interruption pourrait entraîner des problèmes avec votre commande.</span>
+                            </div>
+                        </div>  
+                    
                 </div>
+                
                 
                 <form id="payment-confirmation-form" method="post" action="" class="space-y-4">
                     <div>
@@ -498,6 +508,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['checkout'])) {
     </div>
 
     <script src="https://cdn.jsdelivr.net/npm/typed.js@2.0.12"></script>
+    
+
     <script>
         // Toggle sidebar on mobile
         document.addEventListener('DOMContentLoaded', function() {
@@ -722,7 +734,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['checkout'])) {
             const paymentLinkSection = document.getElementById('payment-link-section');
             const paymentLinkBtn = document.getElementById('payment-link-btn');
             const generatePaymentBtn = document.getElementById('generate-payment-btn');
-
+           
             // Open modal
             if (rechargeBtn) {
                 rechargeBtn.addEventListener('click', function() {
@@ -931,16 +943,25 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['checkout'])) {
 
             // Valider le code de confirmation
             if (paymentConfirmationForm) {
+                confirmCheckoutBtn.addEventListener('click', ()=> {
+                    confirmCheckoutBtn.disabled = true;
+                    confirmCheckoutBtn.classList.add("opacity-50", "cursor-not-allowed");
+                    confirmCheckoutBtn.textContent = "Traitement en cours...";
+                });
+                
                 paymentConfirmationForm.addEventListener('submit', function(e) {
                     if (confirmationCode.value !== 'kmerhosting') {
                         e.preventDefault();
                         confirmationError.classList.remove('hidden');
+                        
                         return false;
                     }
                     
                     // Si le code est correct, soumettre le formulaire
                     confirmationError.classList.add('hidden');
+                   
                     return true;
+                    
                 });
             }
         });
