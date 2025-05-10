@@ -46,4 +46,4 @@ try {
     redirectWithMessage('../../login.php', 'success', 'Compte créé avec succès. Connectez-vous.');
 } catch (Exception $e) {
     redirectWithMessage('../../register.php', 'error', 'Erreur lors de la création du compte.');
-} 
+}

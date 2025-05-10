@@ -392,6 +392,111 @@ $userServices = getUserServices($_SESSION['user_id']);
                                     
                                 ];
                             }
+                        } elseif ($service['service_type'] === 'domain') {
+                            // Get domain package details if available
+                            $domainName = $service['domain_name'] ?? 'Domaine sans nom';
+                            
+                            // Trouver l'extension du domaine
+                            $extension = '';
+                            if (!empty($domainName)) {
+                                $parts = explode('.', $domainName);
+                                if (count($parts) > 1) {
+                                    $extension = '.' . end($parts);
+                                }
+                            }
+                            
+                            // Chercher le package correspondant à cette extension
+                            $domainPackage = null;
+                            $domainPackages = getDomainPackages();
+                            foreach ($domainPackages as $package) {
+                                if ($package['extension'] === $extension) {
+                                    $domainPackage = $package;
+                                    break;
+                                }
+                            }
+                            
+                            // Si on n'a pas trouvé de package, on utilise des valeurs par défaut
+                            if (!$domainPackage) {
+                                $domainPackage = [
+                                    'extension' => $extension ?: '.com',
+                                    'renewal_price' => 9500.00,
+                                    'features' => 'Protection WHOIS,DNS Management,Redirection Email,Renouvellement automatique'
+                                ];
+                            }
+                            
+                            // Domain services have different features
+                            $features = [
+                                ['name' => 'Extension', 'value' => $domainPackage['extension']],
+                                ['name' => 'Prix renouvellement', 'value' => formatPrice($domainPackage['renewal_price'])],
+                                ['name' => 'Protection WHOIS', 'value' => 'Inclus'],
+                                ['name' => 'Gestion DNS', 'value' => 'Inclus'],
+                                ['name' => 'Redirection Email', 'value' => 'Inclus'],
+                                ['name' => 'Renouvellement auto', 'value' => 'Disponible']
+                            ];
+
+                            // Add Quick Actions section specifically for domains
+                            ?>
+                            <!-- Quick Actions -->
+                            <div class="p-5 border-b border-dark-700 bg-dark-900/50">
+                                <div class="flex flex-wrap gap-3">
+                                    <?php if ($isActive): ?>
+                                        <p class="text-base font-medium text-green-400">Votre domaine est actif</p>
+                                    <?php else: ?>
+                                        <p class="text-base font-medium text-yellow-400">Votre domaine est en cours d'enregistrement</p>
+                                    <?php endif; ?>
+                                </div>
+                            </div>
+
+                            <!-- Domain Info -->
+                            <div class="p-5 grid gap-6">
+                                <?php if ($service['status'] === 'pending'): ?>
+                                    <div class="bg-yellow-900/20 border border-yellow-700/30 rounded-lg p-4">
+                                        <div class="flex items-start">
+                                            <div class="flex-shrink-0 mt-0.5">
+                                                <i class="fas fa-clock text-yellow-500 text-xl"></i>
+                                            </div>
+                                            <div class="ml-3">
+                                                <h3 class="text-base font-medium text-yellow-400">Enregistrement en cours</h3>
+                                                <div class="mt-2 text-sm text-gray-300">
+                                                    <p>L'enregistrement de votre domaine <strong><?php echo empty(htmlspecialchars($domainName)) ? htmlspecialchars($domainName) : ''; ?></strong> est en cours de traitement.</p>
+                                                    <p class="mt-2">Ce processus peut prendre jusqu'à 24-48 heures. <br>Contactez le support en cas de problème: support@kmerhosting.site</p>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                <?php endif; ?>
+
+                                <?php if ($isActive): ?>
+                                    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+                                        <div class="bg-dark-900 rounded-lg p-4 flex items-center">
+                                            <div class="bg-dark-800 p-3 rounded-lg mr-3">
+                                                <i class="fas fa-server text-kmergreen text-xl"></i>
+                                            </div>
+                                            <div>
+                                                <div class="text-sm text-gray-400 mb-1">Serveurs DNS</div>
+                                                <div class="text-lg text-white font-medium">
+                                                    ns1.kmerhosting.site
+                                                </div>
+                                                <div class="text-lg text-white font-medium">
+                                                    ns2.kmerhosting.site
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="bg-dark-900 rounded-lg p-4 flex items-center">
+                                            <div class="bg-dark-800 p-3 rounded-lg mr-3">
+                                                <i class="fas fa-globe text-kmergreen text-xl"></i>
+                                            </div>
+                                            <div>
+                                                <div class="text-sm text-gray-400 mb-1">Nom de domaine</div>
+                                                <div class="text-lg text-white font-medium">
+                                                    <?php echo htmlspecialchars($domainName); ?>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                <?php endif; ?>
+                            </div>
+                            <?php
                         }
                         ?>
                         
@@ -400,7 +505,9 @@ $userServices = getUserServices($_SESSION['user_id']);
                             <div class="p-5 border-b border-dark-700">
                                 <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
                                     <div>
-                                        <h2 class="text-lg font-semibold text-white mb-1"><?php echo htmlspecialchars($service['service_name']); ?></h2>
+                                        <h2 class="text-lg font-semibold text-white mb-1">
+                                            <?php echo htmlspecialchars(is_string($service['service_name']) ? $service['service_name'] : 'Service en attente de validation'); ?>
+                                        </h2>
                                         <div class="text-sm text-gray-400">ID: <?php echo htmlspecialchars($service['id']); ?></div>
                                     </div>
                                     <div class="flex items-center gap-3">
@@ -440,10 +547,10 @@ $userServices = getUserServices($_SESSION['user_id']);
                                     <?php endif; ?>
                                     
                                     <?php if ($service['service_type'] === 'ssl'): ?>
-                                        <button class="px-4 py-2 bg-dark-700 hover:bg-dark-600 text-white rounded-md transition-colors flex items-center">
+                                        <p class="px-4 py-2 bg-dark-700 hover:bg-dark-600 text-white rounded-md transition-colors flex items-center">
                                             <i class="fas fa-shield-alt mr-2"></i>
-                                            Détails du certificat
-                                        </button>
+                                            
+                                        </p>
                                     <?php endif; ?>
                                 </div>
                             </div>

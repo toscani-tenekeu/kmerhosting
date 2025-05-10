@@ -65,9 +65,14 @@ try {
         // Mettre à jour la quantité
         $stmt = $pdo->prepare("UPDATE cart SET quantity = quantity + ?, updated_at = NOW() WHERE id = ?");
         $result = $stmt->execute([$quantity, $existing['id']]);
+
     } else {
         // Insérer nouveau produit
         $stmt = $pdo->prepare("INSERT INTO cart (user_id, product_type, product_id, quantity, added_at) VALUES (?, ?, ?, ?, NOW())");
+        $result = $stmt->execute([$user_id, $package_type, $product_id, $quantity]);
+
+        // Insérer nouveau produit dans l'historique
+        $stmt = $pdo->prepare("INSERT INTO cart_history (user_id, product_type, product_id, quantity, added_at) VALUES (?, ?, ?, ?, NOW())");
         $result = $stmt->execute([$user_id, $package_type, $product_id, $quantity]);
     }
     

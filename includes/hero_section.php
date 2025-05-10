@@ -48,4 +48,4 @@
     </div>
     <!-- Particles for visual effect -->
     <div id="particles-container" class="absolute inset-0"></div>
-</section> 
+</section>

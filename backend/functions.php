@@ -18,12 +18,12 @@ function getUserCredit($user_id) {
     $result = $stmt->get_result();
     
     if ($result->num_rows === 0) {
-        // Créer un crédit initial de 500 XAF
-        $sql = "INSERT INTO credit (user_id, amount) VALUES (?, 500.00)";
+        // Créer un crédit initial XAF
+        $sql = "INSERT INTO credit (user_id, amount) VALUES (?, 0.00)";
         $stmt = $conn->prepare($sql);
         $stmt->bind_param("i", $user_id);
         $stmt->execute();
-        return 500.00;
+        return 0.00;
     }
     
     $row = $result->fetch_assoc();
@@ -335,11 +335,18 @@ function addToCart($user_id, $product_type, $product_id, $quantity = 1) {
         $stmt->bind_param("ii", $new_quantity, $row['id']);
         return $stmt->execute();
     } else {
+        // Ajouter un nouvel élément a l'historique
+        $sql = "INSERT INTO cart_history (user_id, product_type, product_id, quantity) VALUES (?, ?, ?, ?)";
+        $stmt = $conn->prepare($sql);
+        $stmt->bind_param("isis", $user_id, $product_type, $product_id, $quantity);
+        $stmt->execute();
+
         // Ajouter un nouvel élément
         $sql = "INSERT INTO cart (user_id, product_type, product_id, quantity) VALUES (?, ?, ?, ?)";
         $stmt = $conn->prepare($sql);
         $stmt->bind_param("isis", $user_id, $product_type, $product_id, $quantity);
         return $stmt->execute();
+
     }
 }
 
@@ -408,7 +415,7 @@ function getProductName($product_type, $product_id) {
         case 'domain':
             return 'Domaine: ' . $product_id;
         default:
-            return 'Produit inconnu';
+            return 'Produit en attente de validation';
     }
     
     $stmt = $conn->prepare($sql);
@@ -625,6 +632,7 @@ function getUserServices($user_id) {
             WHEN us.service_type = 'hosting' THEN hp.name
             WHEN us.service_type = 'wordpress' THEN wp.name
             WHEN us.service_type = 'ssl' THEN sp.name
+            WHEN us.service_type = 'domain' THEN CONCAT('Domaine: ', us.domain_name)
             ELSE 'Service inconnu'
         END as service_name
         FROM user_services us
@@ -685,7 +693,7 @@ function getBillingCycleLabel($cycle) {
         case 'annual':
             return 'Annuel';
         default:
-            return ucfirst($cycle);
+            return 'Annuel';
     }
 }
 
@@ -812,9 +820,9 @@ function generateDefaultConnectionInfo($service_type, $user_id) {
         case 'hosting':
         case 'wordpress':
             return json_encode([
-                'directadmin_url' => 'https://panel.kmerhosting.site',
+                'directadmin_url' => 'https://www.panel.kmerhosting.site',
                 'directadmin_username' => $username . rand(100, 999),
-                'directadmin_password' => 'Motdepasse@' . rand(1000, 9999),
+               'directadmin_password' => $username . rand(1000, 9999) . rand(1000, 9999) . date('His'),
                 'server_ip' => 'hidden'
             ]);
         case 'ssl':
@@ -857,14 +865,14 @@ function createServicesFromOrder($order_id) {
     
     while ($item = $result->fetch_assoc()) {
         // Déterminer la durée du service en fonction du type de produit
-        $duration = 30; // Par défaut 30 jours (1 mois)
+        $duration = 365; // Par défaut 30 jours (1 mois)
         
         switch ($item['product_type']) {
             case 'hosting':
-                $duration = 30; // 1 mois
+                $duration = 365; // 1 mois
                 break;
             case 'wordpress':
-                $duration = 30; // 1 mois
+                $duration = 365; // 1 mois
                 break;
             case 'ssl':
                 $duration = 365; // 1 an
@@ -886,34 +894,75 @@ function createServicesFromOrder($order_id) {
         // Générer les informations de connexion par défaut
         $connection_info = generateDefaultConnectionInfo($item['product_type'], $user_id);
         
-        // Créer le service avec statut "pending" et connection_info
-        $sql = "INSERT INTO user_services (user_id, service_type, service_id, domain_name, start_date, expiry_date, price, billing_cycle, status, auto_renew, connection_info, created_at) 
-        VALUES (?, ?, ?, NULL, NOW(), ?, ?, 'quarterly', 'pending', 1, ?, NOW())";
+        // Pour les domaines, récupérer le nom de domaine depuis le panier 
+        if ($item['product_type'] === 'domain') {
+            // Vérifier si le product_id est un nom de domaine ou un ID
+            $domain_name = $item['product_id'];
+            
+            // Si c'est un ID numérique, essayer de récupérer le nom de domaine depuis le panier
+            if (is_numeric($domain_name)) {
+                $stmt = $conn->prepare("SELECT custom_domain FROM cart WHERE user_id = ? ORDER BY id DESC LIMIT 1");
+                $stmt->execute([$user_id]);
+                $domain_result = $stmt->fetch(PDO::FETCH_ASSOC);
+                
+                if ($domain_result && !empty($domain_result['custom_domain'])) {
+                    $domain_name = $domain_result['custom_domain'];
+                }
+            }
+            
+            // Créer le service avec le nom de domaine
+            $sql = "INSERT INTO user_services (user_id, service_type, service_id, domain_name, start_date, expiry_date, price, billing_cycle, status, auto_renew, connection_info, created_at) 
+            VALUES (?, ?, ?, ?, NOW(), ?, ?, 'annual', 'pending', 1, ?, NOW())";
+            
+            try {
+                $stmt = $conn->prepare($sql);
+                if (!$stmt) {
+                    error_log("Prepare failed: " . $conn->error);
+                    $success = false;
+                    continue;
+                }
+                
+                if (!$stmt->bind_param("issssds", $user_id, $item['product_type'], $service_id, $domain_name, $expiry_date, $item['price'], $connection_info)) {
+                    error_log("Binding parameters failed: " . $stmt->error);
+                    $success = false;
+                    continue;
+                }
+                
+                if (!$stmt->execute()) {
+                    error_log("Erreur lors de la création du service: " . $stmt->error);
+                    $success = false;
+                }
+            } catch (Exception $e) {
+                error_log("Exception during service creation: " . $e->getMessage());
+                $success = false;
+            }
+        } else {
+            // Pour les autres types de services, utiliser la requête existante
+            $sql = "INSERT INTO user_services (user_id, service_type, service_id, domain_name, start_date, expiry_date, price, billing_cycle, status, auto_renew, connection_info, created_at) 
+            VALUES (?, ?, ?, NULL, NOW(), ?, ?, 'quarterly', 'pending', 1, ?, NOW())";
 
-        try {
-            $stmt = $conn->prepare($sql);
-            if (!$stmt) {
-                error_log("Prepare failed: " . $conn->error);
+            try {
+                $stmt = $conn->prepare($sql);
+                if (!$stmt) {
+                    error_log("Prepare failed: " . $conn->error);
+                    $success = false;
+                    continue;
+                }
+                
+                if (!$stmt->bind_param("isssds", $user_id, $item['product_type'], $service_id, $expiry_date, $item['price'], $connection_info)) {
+                    error_log("Binding parameters failed: " . $stmt->error);
+                    $success = false;
+                    continue;
+                }
+                
+                if (!$stmt->execute()) {
+                    error_log("Erreur lors de la création du service: " . $stmt->error);
+                    $success = false;
+                }
+            } catch (Exception $e) {
+                error_log("Exception during service creation: " . $e->getMessage());
                 $success = false;
-                continue;
             }
-            
-            // Ensure the number of bind parameters matches the SQL placeholders (?)
-            // i = integer, s = string, d = double/float
-            // We have 6 placeholders: user_id(i), service_type(s), service_id(s), expiry_date(s), price(d), connection_info(s)
-            if (!$stmt->bind_param("isssds", $user_id, $item['product_type'], $service_id, $expiry_date, $item['price'], $connection_info)) {
-                error_log("Binding parameters failed: " . $stmt->error);
-                $success = false;
-                continue;
-            }
-            
-            if (!$stmt->execute()) {
-                error_log("Erreur lors de la création du service: " . $stmt->error);
-                $success = false;
-            }
-        } catch (Exception $e) {
-            error_log("Exception during service creation: " . $e->getMessage());
-            $success = false;
         }
     }
     

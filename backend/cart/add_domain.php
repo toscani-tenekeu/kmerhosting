@@ -81,6 +81,7 @@ if ($result->num_rows > 0) {
 $stmt = $conn->prepare("INSERT INTO cart (user_id, product_type, product_id, quantity, custom_domain, added_at) VALUES (?, 'domain', ?, 1, ?, NOW())");
 $stmt->bind_param("iis", $user_id, $package_id, $domain);
 
+
 if ($stmt->execute()) {
     // Récupérer le nombre d'articles dans le panier
     $cartCount = getCartItemCount($user_id);
@@ -97,5 +98,16 @@ if ($stmt->execute()) {
         'success' => false,
         'message' => 'Une erreur est survenue lors de l\'ajout du domaine au panier.'
     ]);
+}
+
+// Ajouter le domaine au historique des paniers
+$stmt = $conn->prepare("INSERT INTO cart_history (user_id, product_type, product_id, quantity, custom_domain, added_at) VALUES (?, 'domain', ?, 1, ?, NOW())");
+$stmt->bind_param("iis", $user_id, $package_id, $domain);
+
+
+if ($stmt->execute()) {
+   ;
+} else {
+   ;
 }
 ?>
